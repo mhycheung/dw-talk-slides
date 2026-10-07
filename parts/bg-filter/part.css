@@ -34,3 +34,17 @@
   height: 800px;
   margin: 0 auto;
 }
+
+.bg-filter-lufit {
+  position: absolute;
+  top: 130px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.bg-filter-lufit img {
+  display: block;
+  height: 840px;
+  margin: 0 auto;
+}

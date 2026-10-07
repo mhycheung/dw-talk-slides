@@ -10,6 +10,7 @@ Copied unchanged from the direct-wave slide part of the seminar_SBU talk:
   at 300 dpi; top and bottom panels only (the middle panel, the decay rate, is removed).
 - lu_fig1_sketch.png: Lu+ (2510.01001) Fig. 1 (source file figs/horizon.png), unchanged.
 
-- lu_fig4_late_times.svg: Lu+ (2510.01001) Fig. 4 (source file figs/late_times.pdf), converted
-  with `pdftocairo -svg`, unmodified. Frequency and damping rate of the direct wave inferred
-  from GW250114 after removing the (l=m=2, n=0,1,2) QNMs, for start times -9 to -3 M_f^det.
+- lu_fig2_whitened_strain.svg: Lu+ (2510.01001) Fig. 2 (source file figs/NRSur_whitened_strain.pdf),
+  converted with `pdftocairo -svg`, unmodified. Whitened LIGO Hanford strain of GW250114 (gray)
+  and the maximum-a-posteriori NRSur7dq4 reconstruction (red): (a) original, (b) with the
+  (l=m=2, n=0,1,2) QNMs removed, (c) with the QNMs and the direct wave removed.
