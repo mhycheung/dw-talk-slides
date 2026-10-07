@@ -1,5 +1,6 @@
-ma_rwz_filter.svg: Fig. 3 (file RWZ.pdf) of S. Ma et al., "Quasinormal-mode filters: a new
+ma_rwz_filter_upper.svg: upper panels of Fig. 3 (file RWZ.pdf) of S. Ma et al., "Quasinormal-mode filters: a new
 approach to analyze the gravitational-wave ringdown of binary black-hole mergers",
-arXiv:2207.10870 (v2 source), converted with `pdftocairo -svg RWZ.pdf`. Unmodified.
+arXiv:2207.10870 (v2 source), converted with `pdftocairo -svg RWZ.pdf`, then cropped to the upper panels by setting
+the SVG viewBox to 0 0 561.553125 258 (pt); the drawing is otherwise unmodified.
 Upper panels: Re h22 (black) and Re h22 filtered by F_220 (red) for a Schwarzschild BH
-perturbed by a Gaussian pulse; lower panels: their difference.
+perturbed by a Gaussian pulse.
