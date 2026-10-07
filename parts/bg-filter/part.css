@@ -1,6 +1,15 @@
+.bg-filter-eq {
+  position: absolute;
+  top: 105px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 52px;
+}
+
 .bg-filter-fig {
   position: absolute;
-  top: 150px;
+  top: 365px;
   left: 0;
   right: 0;
   text-align: center;
@@ -8,15 +17,6 @@
 
 .bg-filter-fig img {
   display: block;
-  width: 1300px;
+  width: 1250px;
   margin: 0 auto 4px;
-}
-
-.bg-filter-eq {
-  position: absolute;
-  top: 820px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 52px;
 }
