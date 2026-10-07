@@ -1,6 +1,7 @@
 // Slide bg-filter-td: Eq. (N17) of Cheung (2608.29466) applied step by step to a QNM that
 // starts abruptly at t = 0. For t >= 0 the waveform to the future of t, rescaled to unit
 // amplitude, is exactly Q_220, so the mismatch term and the filtered waveform vanish.
+// Both panels show |Re| on a log axis; exact zeros go on a separate "0" row below a break.
 (function () {
   "use strict";
 
@@ -8,16 +9,22 @@
   // Toy 220 mode: same quality factor as Schwarzschild 220 (M omega = 0.3737 - 0.0890 i),
   // time unit rescaled so that a step of 1 in t is visible.
   var WR = 2.0, WI = -0.475;      // omega_220 = WR + i WI
-  var AR = Math.cos(0.6), AI = -Math.sin(0.6);  // complex amplitude A
+  var AR = Math.cos(0.2), AI = -Math.sin(0.2);  // complex amplitude A; phase keeps t = 0, 1, 2 off the zeros of Re
   var T0 = -2, T1 = 8;            // time range shown
-  var X0 = 110, X1 = 1270;        // plot x range in slide px
-  var TOP = { y0: 230, y1: 560 }, BOT = { y0: 660, y1: 990 };
-  var YMAX = 1.15;
+  var X0 = 270, X1 = 1250;        // plot x range in slide px
+  var LMIN = -3, LMAX = Math.log10(2);  // log10 range of the log region
+  // y0: top of the frame; lb: bottom of the log region; z: the "0" row; y1: the x axis
+  var TOP = { y0: 250, lb: 465, z: 510, y1: 540, id: "top" };
+  var BOT = { y0: 635, lb: 850, z: 895, y1: 925, id: "bot" };
+  var BRK = 487;                  // offset of the axis break from y0 is (BRK - TOP.y0)
   var TIMES = [0, 1, 2];          // times visited one after another
   var SUB = 5;                    // stages per time: arrow, dashed QNM, psi = Q, mismatch = 0, point
 
   function X(t) { return X0 + (t - T0) / (T1 - T0) * (X1 - X0); }
-  function Y(p, v) { var c = (p.y0 + p.y1) / 2; return c - v / YMAX * (p.y1 - p.y0) / 2; }
+  function LY(p, v) {
+    var l = v > 0 ? Math.log10(v) : -99;
+    return p.y0 + (LMAX - l) / (LMAX - LMIN) * (p.lb - p.y0);
+  }
 
   // Re[a e^{-i omega (t - ts)}] for complex a = (ar, ai)
   function qnm(ar, ai, ts, t) {
@@ -38,33 +45,94 @@
     return n;
   }
 
-  function path(fn, ta, tb, p) {
-    var d = "", n = 600;
+  // |fn| on the log axis, from ta to tb, clipped to the log region of panel p
+  function logPath(fn, ta, tb, p) {
+    var d = "", n = 3000;
     for (var i = 0; i <= n; i++) {
       var t = ta + (tb - ta) * i / n;
-      d += (i ? "L" : "M") + X(t).toFixed(1) + " " + Y(p, fn(t)).toFixed(1);
+      var y = Math.min(LY(p, Math.abs(fn(t))), p.lb + 400);
+      d += (i ? "L" : "M") + X(t).toFixed(1) + " " + y.toFixed(1);
     }
     return d;
   }
 
   function frame(svg, p) {
-    el("line", { x1: X0, x2: X1, y1: Y(p, 0), y2: Y(p, 0), stroke: "#bbb", "stroke-width": 2 }, svg);
-    el("line", { x1: X0, x2: X1, y1: p.y1, y2: p.y1, stroke: "#000", "stroke-width": 3 }, svg);
+    var k = "#000", w = 3, brk = p.y0 + (BRK - TOP.y0);
+    var clip = el("clipPath", { id: "bg-filter-td-clip-" + p.id }, svg);
+    el("rect", { x: X0, y: p.y0, width: X1 - X0, height: p.lb - p.y0 }, clip);
+    // frame: top and bottom spines, side spines interrupted at the break
+    el("line", { x1: X0, x2: X1, y1: p.y0, y2: p.y0, stroke: k, "stroke-width": w }, svg);
+    el("line", { x1: X0, x2: X1, y1: p.y1, y2: p.y1, stroke: k, "stroke-width": w }, svg);
+    [X0, X1].forEach(function (x) {
+      el("line", { x1: x, x2: x, y1: p.y0, y2: brk - 7, stroke: k, "stroke-width": w }, svg);
+      el("line", { x1: x, x2: x, y1: brk + 7, y2: p.y1, stroke: k, "stroke-width": w }, svg);
+      [-7, 7].forEach(function (o) {
+        el("line", { x1: x - 12, x2: x + 12, y1: brk + o + 5, y2: brk + o - 5, stroke: k, "stroke-width": w }, svg);
+      });
+    });
+    // x ticks, inward, on both spines
     for (var t = T0; t <= T1; t++) {
-      el("line", { x1: X(t), x2: X(t), y1: p.y1, y2: p.y1 - 14, stroke: "#000", "stroke-width": 3 }, svg);
+      el("line", { x1: X(t), x2: X(t), y1: p.y1, y2: p.y1 - 14, stroke: k, "stroke-width": w }, svg);
+      el("line", { x1: X(t), x2: X(t), y1: p.y0, y2: p.y0 + 14, stroke: k, "stroke-width": w }, svg);
     }
+    // log y ticks: major at each decade, minor at 2..9
+    for (var e = LMIN; e <= 0; e++) {
+      for (var m = 1; m <= 9; m++) {
+        var v = m * Math.pow(10, e);
+        if (Math.log10(v) > LMAX) break;
+        var y = LY(p, v), len = m === 1 ? 16 : 8;
+        el("line", { x1: X0, x2: X0 + len, y1: y, y2: y, stroke: k, "stroke-width": w }, svg);
+        el("line", { x1: X1, x2: X1 - len, y1: y, y2: y, stroke: k, "stroke-width": w }, svg);
+      }
+    }
+    // the "0" row
+    el("line", { x1: X0, x2: X0 + 16, y1: p.z, y2: p.z, stroke: k, "stroke-width": w }, svg);
+    el("line", { x1: X1, x2: X1 - 16, y1: p.z, y2: p.z, stroke: k, "stroke-width": w }, svg);
+    el("line", { x1: X0, x2: X1, y1: p.z, y2: p.z, stroke: "#ccc", "stroke-width": 2 }, svg);
+  }
+
+  // tick and axis labels, rendered once with KaTeX
+  function labels(slide) {
+    var box = slide.querySelector(".bg-filter-td-axes");
+    if (box.firstChild) return;
+    function put(tex, x, y, cls, tf) {
+      var s = document.createElement("span");
+      s.className = cls;
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.transform = tf;
+      katex.render(tex, s);
+      box.appendChild(s);
+    }
+    [TOP, BOT].forEach(function (p) {
+      for (var e = LMIN; e <= 0; e++) {
+        put("10^{" + e + "}", X0 - 12, LY(p, Math.pow(10, e)), "bg-filter-td-tick", "translate(-100%,-50%)");
+      }
+      put("0", X0 - 12, p.z, "bg-filter-td-tick", "translate(-100%,-50%)");
+    });
+    for (var t = T0; t <= T1; t += 2) {
+      put(String(t), X(t), BOT.y1 + 8, "bg-filter-td-tick", "translate(-50%,0)");
+    }
+    put("t", (X0 + X1) / 2, BOT.y1 + 46, "bg-filter-td-axlabel", "translate(-50%,0)");
+    put("|\\mathrm{Re}\\,\\Psi|", X0 - 140, (TOP.y0 + TOP.y1) / 2, "bg-filter-td-axlabel",
+        "translate(-50%,-50%) rotate(-90deg)");
+    put("|\\mathrm{Re}\\,\\hat{\\Psi}|", X0 - 140, (BOT.y0 + BOT.y1) / 2, "bg-filter-td-axlabel",
+        "translate(-50%,-50%) rotate(-90deg)");
   }
 
   function draw(slide, k) {
+    labels(slide);
     var svg = slide.querySelector(".bg-filter-td-plot");
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     frame(svg, TOP);
     frame(svg, BOT);
+    var clipTop = "url(#bg-filter-td-clip-top)";
 
-    // original: zero before t = 0, the QNM after, with the jump at t = 0
-    var orig = path(function (t) { return 0; }, T0, 0, TOP) +
-               path(function (t) { return qnm(AR, AI, 0, t); }, 0, T1, TOP).replace(/^M/, "L");
-    el("path", { d: orig, fill: "none", stroke: "#000", "stroke-width": 5 }, svg);
+    // original: zero before t = 0 (on the "0" row), the QNM after, with the jump at t = 0
+    el("line", { x1: X(T0), x2: X(0), y1: TOP.z, y2: TOP.z, stroke: "#000", "stroke-width": 5 }, svg);
+    el("line", { x1: X(0), x2: X(0), y1: TOP.z, y2: LY(TOP, Math.abs(AR)), stroke: "#000", "stroke-width": 5 }, svg);
+    el("path", { d: logPath(function (t) { return qnm(AR, AI, 0, t); }, 0, T1, TOP),
+                 fill: "none", stroke: "#000", "stroke-width": 5, "clip-path": clipTop }, svg);
 
     var last = k > TIMES.length * SUB;            // final stage: the whole filtered waveform
     var idx = last ? TIMES.length : Math.floor((k - 1) / SUB);
@@ -73,16 +141,18 @@
 
     if (sub >= 2) {
       var a = psiAt(ts);
-      el("path", { d: path(function (t) { return qnm(a[0], a[1], ts, t); }, ts, T1, TOP),
-                   fill: "none", stroke: "#d62728", "stroke-width": 5, "stroke-dasharray": "18 12" }, svg);
+      el("path", { d: logPath(function (t) { return qnm(a[0], a[1], ts, t); }, ts, T1, TOP),
+                   fill: "none", stroke: "#d62728", "stroke-width": 5, "stroke-dasharray": "18 12",
+                   "clip-path": clipTop }, svg);
     }
 
+    // filtered: exactly zero for t >= 0, so it lives on the "0" row
     if (last) {
-      el("line", { x1: X(0), x2: X1, y1: Y(BOT, 0), y2: Y(BOT, 0), stroke: "#000", "stroke-width": 5 }, svg);
+      el("line", { x1: X(0), x2: X1, y1: BOT.z, y2: BOT.z, stroke: "#000", "stroke-width": 5 }, svg);
     }
     var npts = idx + (sub === SUB ? 1 : 0);
     for (var j = 0; j < npts; j++) {
-      el("circle", { cx: X(TIMES[j]), cy: Y(BOT, 0), r: 13, fill: "#000" }, svg);
+      el("circle", { cx: X(TIMES[j]), cy: BOT.z, r: 13, fill: "#000" }, svg);
     }
 
     var tl = slide.querySelector(".bg-filter-td-tlabel");
