@@ -1,4 +1,4 @@
-// Slide bg-filter-td: Eq. (N17) of Cheung (2608.29466) applied step by step to a QNM that
+// Slide td-filter-n17: Eq. (N17) of Cheung (2608.29466) applied step by step to a QNM that
 // starts abruptly at t = 0. For t >= 0 the waveform to the future of t, rescaled to unit
 // amplitude, is exactly Q_220, so the mismatch term and the filtered waveform vanish.
 // Both panels show |Re| on a log axis; exact zeros go on a separate "0" row below a break.
@@ -58,7 +58,7 @@
 
   function frame(svg, p) {
     var k = "#000", w = 3, brk = p.y0 + (BRK - TOP.y0);
-    var clip = el("clipPath", { id: "bg-filter-td-clip-" + p.id }, svg);
+    var clip = el("clipPath", { id: "td-filter-clip-" + p.id }, svg);
     el("rect", { x: X0, y: p.y0, width: X1 - X0, height: p.lb - p.y0 }, clip);
     // frame: top and bottom spines, side spines interrupted at the break
     el("line", { x1: X0, x2: X1, y1: p.y0, y2: p.y0, stroke: k, "stroke-width": w }, svg);
@@ -93,7 +93,7 @@
 
   // tick and axis labels, rendered once with KaTeX
   function labels(slide) {
-    var box = slide.querySelector(".bg-filter-td-axes");
+    var box = slide.querySelector(".td-filter-axes");
     if (box.firstChild) return;
     function put(tex, x, y, cls, tf) {
       var s = document.createElement("span");
@@ -106,27 +106,27 @@
     }
     [TOP, BOT].forEach(function (p) {
       for (var e = LMIN; e <= 0; e++) {
-        put("10^{" + e + "}", X0 - 12, LY(p, Math.pow(10, e)), "bg-filter-td-tick", "translate(-100%,-50%)");
+        put("10^{" + e + "}", X0 - 12, LY(p, Math.pow(10, e)), "td-filter-tick", "translate(-100%,-50%)");
       }
-      put("0", X0 - 12, p.z, "bg-filter-td-tick", "translate(-100%,-50%)");
+      put("0", X0 - 12, p.z, "td-filter-tick", "translate(-100%,-50%)");
     });
     for (var t = T0; t <= T1; t += 2) {
-      put(String(t), X(t), BOT.y1 + 8, "bg-filter-td-tick", "translate(-50%,0)");
+      put(String(t), X(t), BOT.y1 + 8, "td-filter-tick", "translate(-50%,0)");
     }
-    put("t", (X0 + X1) / 2, BOT.y1 + 46, "bg-filter-td-axlabel", "translate(-50%,0)");
-    put("|\\mathrm{Re}\\,\\Psi|", X0 - 140, (TOP.y0 + TOP.y1) / 2, "bg-filter-td-axlabel",
+    put("t", (X0 + X1) / 2, BOT.y1 + 46, "td-filter-axlabel", "translate(-50%,0)");
+    put("|\\mathrm{Re}\\,\\Psi|", X0 - 140, (TOP.y0 + TOP.y1) / 2, "td-filter-axlabel",
         "translate(-50%,-50%) rotate(-90deg)");
-    put("|\\mathrm{Re}\\,\\hat{\\Psi}|", X0 - 140, (BOT.y0 + BOT.y1) / 2, "bg-filter-td-axlabel",
+    put("|\\mathrm{Re}\\,\\hat{\\Psi}|", X0 - 140, (BOT.y0 + BOT.y1) / 2, "td-filter-axlabel",
         "translate(-50%,-50%) rotate(-90deg)");
   }
 
   function draw(slide, k) {
     labels(slide);
-    var svg = slide.querySelector(".bg-filter-td-plot");
+    var svg = slide.querySelector(".td-filter-plot");
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     frame(svg, TOP);
     frame(svg, BOT);
-    var clipTop = "url(#bg-filter-td-clip-top)";
+    var clipTop = "url(#td-filter-clip-top)";
 
     // original: zero before t = 0 (on the "0" row), the QNM after, with the jump at t = 0
     el("line", { x1: X(T0), x2: X(0), y1: TOP.z, y2: TOP.z, stroke: "#000", "stroke-width": 5 }, svg);
@@ -155,7 +155,7 @@
       el("circle", { cx: X(TIMES[j]), cy: BOT.z, r: 13, fill: "#000" }, svg);
     }
 
-    var tl = slide.querySelector(".bg-filter-td-tlabel");
+    var tl = slide.querySelector(".td-filter-tlabel");
     if (sub >= 1) {
       var x = X(ts), yTip = TOP.y1 + 6, yTail = TOP.y1 + 80;
       el("line", { x1: x, x2: x, y1: yTail, y2: yTip + 22, stroke: "#000", "stroke-width": 6 }, svg);
@@ -168,11 +168,11 @@
       tl.style.visibility = "hidden";
     }
 
-    slide.querySelector(".bg-filter-td-psi").classList.toggle("bg-filter-td-on", sub >= 3);
-    slide.querySelector(".bg-filter-td-mis").classList.toggle("bg-filter-td-on", sub >= 4);
+    slide.querySelector(".td-filter-psi").classList.toggle("td-filter-on", sub >= 3);
+    slide.querySelector(".td-filter-mis").classList.toggle("td-filter-on", sub >= 4);
   }
 
-  Deck.widget("bg-filter-td", {
+  Deck.widget("td-filter-n17", {
     steps: TIMES.length * SUB + 1,
     step: function (slide, k) { draw(slide, k); }
   });

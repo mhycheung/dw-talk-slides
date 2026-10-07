@@ -1,0 +1,68 @@
+.td-filter-eq {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 50px;
+}
+
+.td-filter-plot {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.td-filter-label {
+  position: absolute;
+  left: 860px;
+  width: 360px;
+  text-align: right;
+  font-size: 64px;
+  font-weight: bold;
+  color: #000;
+}
+
+.td-filter-label-top { top: 262px; }
+.td-filter-label-bot { top: 647px; }
+
+.td-filter-tlabel {
+  position: absolute;
+  top: 562px;
+  font-size: 40px;
+  white-space: nowrap;
+}
+
+.td-filter-side {
+  position: absolute;
+  top: 290px;
+  left: 1300px;
+  width: 600px;
+  text-align: center;
+  font-size: 42px;
+}
+
+.td-filter-side > div { visibility: hidden; }
+.td-filter-side > div.td-filter-on { visibility: visible; }
+
+.bg-filter-lufit {
+  position: absolute;
+  top: 150px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.bg-filter-lufit img {
+  display: block;
+  height: 800px;
+  margin: 0 auto 4px;
+}
+
+.td-filter-axes > span {
+  position: absolute;
+  white-space: nowrap;
+}
+
+.td-filter-tick { font-size: 34px; }
+.td-filter-axlabel { font-size: 42px; }
