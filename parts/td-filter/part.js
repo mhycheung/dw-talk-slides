@@ -3,6 +3,9 @@
 // amplitude, is exactly Q_220, so the mismatch term and the filtered waveform vanish.
 // For t < 0, Psi(t) = 0 and the filter returns minus the least-squares amplitude of a QNM
 // fitted to the waveform after t: the ringdown flipped in time, -A e^{-i omega^* t}.
+// Slide td-filter-diff: the same filter on a QNM of another frequency omega' (t >= 0 only).
+// There psi = Q' and the mismatch is the constant F(omega') = (omega' - omega_220) /
+// (omega' - omega_220^*), so the filtered waveform is the same QNM rescaled by F(omega').
 // Both panels show |.| (black) and |Re .| (gray) on a log axis; exact zeros go on a separate "0" row below a break.
 (function () {
   "use strict";
@@ -11,8 +14,12 @@
   // Toy 220 mode: same quality factor as Schwarzschild 220 (M omega = 0.3737 - 0.0890 i),
   // time unit rescaled so that a step of 1 in t is visible.
   var WR = 2.0, WI = -0.475;      // omega_220 = WR + i WI
+  var W220 = [WR, WI];
+  // Schwarzschild 330 (M omega = 0.5994 - 0.0927 i) in the same rescaled units:
+  // each part scaled by the ratio of the 330 and 220 parts
+  var W330 = [WR * 0.5994 / 0.3737, WI * 0.0927 / 0.0890];
   var AR = Math.cos(0.2), AI = -Math.sin(0.2);  // complex amplitude A; phase keeps t = 0, 1, 2 off the zeros of Re
-  var T0 = -8, T1 = 8;            // time range shown
+  var T0 = -8, T1 = 8;            // time range shown; T0 is set per slide in draw()
   var X0 = 270, X1 = 1250;        // plot x range in slide px
   var LMIN = -3, LMAX = Math.log10(2);  // log10 range of the log region
   // y0: top of the frame; lb: bottom of the log region; z: the "0" row; y1: the x axis
@@ -31,15 +38,15 @@
     return p.y0 + (LMAX - l) / (LMAX - LMIN) * (p.lb - p.y0);
   }
 
-  // Re[a e^{-i omega (t - ts)}] for complex a = (ar, ai)
-  function qnm(ar, ai, ts, t) {
-    var s = t - ts, e = Math.exp(WI * s), c = Math.cos(WR * s), sn = Math.sin(WR * s);
+  // Re[a e^{-i omega (t - ts)}] for complex a = (ar, ai), omega = w[0] + i w[1]
+  function qnm(ar, ai, ts, t, w) {
+    var s = t - ts, e = Math.exp(w[1] * s), c = Math.cos(w[0] * s), sn = Math.sin(w[0] * s);
     // e^{-i omega s} = e^{WI s} (cos WR s - i sin WR s)
     return e * (ar * c + ai * sn);
   }
-  // Psi(ts) as a complex number
-  function psiAt(ts) {
-    var e = Math.exp(WI * ts), c = Math.cos(WR * ts), sn = Math.sin(WR * ts);
+  // Psi(ts) = A e^{-i omega ts} as a complex number
+  function psiAt(ts, w) {
+    var e = Math.exp(w[1] * ts), c = Math.cos(w[0] * ts), sn = Math.sin(w[0] * ts);
     return [e * (AR * c + AI * sn), e * (AI * c - AR * sn)];
   }
 
@@ -52,14 +59,22 @@
   }
 
   // |a e^{-i omega (t - ts)}|
-  function env(ar, ai, ts, t) { return Math.hypot(ar, ai) * Math.exp(WI * (t - ts)); }
+  function env(ar, ai, ts, t, w) { return Math.hypot(ar, ai) * Math.exp(w[1] * (t - ts)); }
+
+  // complex product
+  function mul(a, b) { return [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]]; }
+  // F(omega') = (omega' - omega_220) / (omega' - omega_220^*)
+  function filterAt(w) {
+    var nr = w[0] - WR, ni = w[1] - WI, dr = w[0] - WR, di = w[1] + WI, d2 = dr * dr + di * di;
+    return [(nr * dr + ni * di) / d2, (ni * dr - nr * di) / d2];
+  }
 
   // a QNM from ts on: |.| in `col`, |Re .| in `colRe`, both clipped to the log region
-  function pair(svg, p, ar, ai, ts, col, colRe, dash) {
-    var clip = "url(#td-filter-clip-" + p.id + ")", da = dash ? { "stroke-dasharray": "18 12" } : {};
-    var re = { d: logPath(function (t) { return qnm(ar, ai, ts, t); }, ts, T1, p),
+  function pair(svg, p, ar, ai, ts, w, col, colRe, dash) {
+    var clip = "url(#" + svg.getAttribute("data-clip") + p.id + ")", da = dash ? { "stroke-dasharray": "18 12" } : {};
+    var re = { d: logPath(function (t) { return qnm(ar, ai, ts, t, w); }, ts, T1, p),
                fill: "none", stroke: colRe, "stroke-width": 4, "clip-path": clip };
-    var ab = { d: logPath(function (t) { return env(ar, ai, ts, t); }, ts, T1, p),
+    var ab = { d: logPath(function (t) { return env(ar, ai, ts, t, w); }, ts, T1, p),
                fill: "none", stroke: col, "stroke-width": 5, "clip-path": clip };
     for (var q in da) { re[q] = da[q]; ab[q] = da[q]; }
     el("path", re, svg);
@@ -86,7 +101,7 @@
 
   function frame(svg, p) {
     var k = "#000", w = 3, brk = p.y0 + (BRK - TOP.y0);
-    var clip = el("clipPath", { id: "td-filter-clip-" + p.id }, svg);
+    var clip = el("clipPath", { id: svg.getAttribute("data-clip") + p.id }, svg);
     el("rect", { x: X0, y: p.y0, width: X1 - X0, height: p.lb - p.y0 }, clip);
     // frame: top and bottom spines, side spines interrupted at the break
     el("line", { x1: X0, x2: X1, y1: p.y0, y2: p.y0, stroke: k, "stroke-width": w }, svg);
@@ -120,7 +135,7 @@
   }
 
   // tick and axis labels, rendered once with KaTeX
-  function labels(slide) {
+  function labels(slide, tstep) {
     var box = slide.querySelector(".td-filter-axes");
     if (box.firstChild) return;
     function put(tex, x, y, cls, tf) {
@@ -138,7 +153,7 @@
       }
       put("0", X0 - 12, p.z, "td-filter-tick", "translate(-100%,-50%)");
     });
-    for (var t = T0; t <= T1; t += 4) {
+    for (var t = T0; t <= T1; t += tstep) {
       put(String(t), X(t), BOT.y1 + 8, "td-filter-tick", "translate(-50%,0)");
     }
     put("t", (X0 + X1) / 2, BOT.y1 + 46, "td-filter-axlabel", "translate(-50%,0)");
@@ -148,17 +163,36 @@
         "translate(-50%,-50%) rotate(-90deg)");
   }
 
-  function draw(slide, k) {
-    labels(slide);
+  // empty frames, labels and the original waveform (a QNM of frequency w from t = 0)
+  function base(slide, t0, tstep, w) {
+    T0 = t0;
+    labels(slide, tstep);
     var svg = slide.querySelector(".td-filter-plot");
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     frame(svg, TOP);
     frame(svg, BOT);
-    
     // original: zero before t = 0 (on the "0" row), the QNM after, with the jump at t = 0
     el("line", { x1: X(T0), x2: X(0), y1: TOP.z, y2: TOP.z, stroke: "#000", "stroke-width": 5 }, svg);
     el("line", { x1: X(0), x2: X(0), y1: TOP.z, y2: LY(TOP, Math.hypot(AR, AI)), stroke: "#000", "stroke-width": 5 }, svg);
-    pair(svg, TOP, AR, AI, 0, "#000", "#999", false);
+    pair(svg, TOP, AR, AI, 0, w, "#000", "#999", false);
+    return svg;
+  }
+
+  // arrow under the top panel at time ts, with its label; ts === null hides it
+  function arrow(slide, svg, ts) {
+    var tl = slide.querySelector(".td-filter-tlabel");
+    if (ts === null) { tl.style.visibility = "hidden"; return; }
+    var x = X(ts), yTip = TOP.y1 + 6, yTail = TOP.y1 + 80;
+    el("line", { x1: x, x2: x, y1: yTail, y2: yTip + 22, stroke: "#000", "stroke-width": 6 }, svg);
+    el("path", { d: "M" + x + " " + yTip + "L" + (x - 15) + " " + (yTip + 28) + "L" + (x + 15) + " " + (yTip + 28) + "Z",
+                 fill: "#000" }, svg);
+    katex.render("t = " + ts, tl);
+    tl.style.left = (x + 20) + "px";
+    tl.style.visibility = "visible";
+  }
+
+  function draw(slide, k) {
+    var svg = base(slide, -8, 4, W220);
 
     // which time and sub-stage k shows; neg: the t < 0 round
     var neg = k > KZERO && k < KFLIP;
@@ -170,8 +204,8 @@
 
     if (sub >= 2) {
       // t >= 0: the QNM with amplitude Psi(t_k); t < 0: the unit template Q_220(t - t_k)
-      var a = neg ? [1, 0] : psiAt(ts);
-      pair(svg, TOP, a[0], a[1], ts, "#d62728", "#f2a3a3", true);
+      var a = neg ? [1, 0] : psiAt(ts, W220);
+      pair(svg, TOP, a[0], a[1], ts, W220, "#d62728", "#f2a3a3", true);
     }
 
     // filtered for t >= 0: exactly zero, on the "0" row
@@ -198,18 +232,7 @@
       el("circle", { cx: X(NEG[j]), cy: LY(BOT, Math.hypot(c[0], c[1])), r: 13, fill: "#000" }, svg);
     }
 
-    var tl = slide.querySelector(".td-filter-tlabel");
-    if (sub >= 1) {
-      var x = X(ts), yTip = TOP.y1 + 6, yTail = TOP.y1 + 80;
-      el("line", { x1: x, x2: x, y1: yTail, y2: yTip + 22, stroke: "#000", "stroke-width": 6 }, svg);
-      el("path", { d: "M" + x + " " + yTip + "L" + (x - 15) + " " + (yTip + 28) + "L" + (x + 15) + " " + (yTip + 28) + "Z",
-                   fill: "#000" }, svg);
-      katex.render("t = " + ts, tl);
-      tl.style.left = (x + 20) + "px";
-      tl.style.visibility = "visible";
-    } else {
-      tl.style.visibility = "hidden";
-    }
+    arrow(slide, svg, sub >= 1 ? ts : null);
 
     slide.querySelector(".td-filter-psi").classList.toggle("td-filter-on", !neg && sub >= 3);
     slide.querySelector(".td-filter-mis").classList.toggle("td-filter-on", !neg && sub >= 4);
@@ -220,5 +243,36 @@
   Deck.widget("td-filter-n17", {
     steps: KFLIP,
     step: function (slide, k) { draw(slide, k); }
+  });
+
+  // Slide td-filter-diff: waveform 330, filter 220. Per time: arrow, dashed Psi(t_k) Q_220,
+  // point at |F(omega_330) Psi(t_k)|; then the whole filtered waveform for t >= 0.
+  var DSUB = 3, DLAST = TIMES.length * DSUB + 1;
+  function drawDiff(slide, k) {
+    var svg = base(slide, -2, 2, W330);
+    var F = filterAt(W330);
+    var last = k >= DLAST, idx = last ? TIMES.length : Math.floor((k - 1) / DSUB);
+    var sub = (k === 0 || last) ? 0 : (k - 1) % DSUB + 1;
+    var ts = TIMES[idx];
+    if (sub >= 2) {
+      var a = psiAt(ts, W330);
+      pair(svg, TOP, a[0], a[1], ts, W220, "#d62728", "#f2a3a3", true);
+    }
+    // filtered for t >= 0: F(omega_330) times the original
+    if (last) {
+      var b = mul(F, [AR, AI]);
+      pair(svg, BOT, b[0], b[1], 0, W330, "#000", "#999", false);
+    }
+    var npts = last ? TIMES.length : idx + (sub === DSUB ? 1 : 0);
+    for (var j = 0; j < npts; j++) {
+      var v = mul(F, psiAt(TIMES[j], W330));
+      el("circle", { cx: X(TIMES[j]), cy: LY(BOT, Math.hypot(v[0], v[1])), r: 13, fill: "#000" }, svg);
+    }
+    arrow(slide, svg, sub >= 1 ? ts : null);
+  }
+
+  Deck.widget("td-filter-diff", {
+    steps: DLAST,
+    step: function (slide, k) { drawDiff(slide, k); }
   });
 })();
