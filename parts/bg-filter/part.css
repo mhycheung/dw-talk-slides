@@ -1,0 +1,24 @@
+.bg-filter-fig {
+  position: absolute;
+  top: 70px;
+  left: 90px;
+  width: 940px;
+  text-align: center;
+}
+
+.bg-filter-fig img {
+  display: block;
+  width: 940px;
+}
+
+.bg-filter-eq {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 1060px;
+  right: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+}
