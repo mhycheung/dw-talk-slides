@@ -12,7 +12,7 @@
   // time unit rescaled so that a step of 1 in t is visible.
   var WR = 2.0, WI = -0.475;      // omega_220 = WR + i WI
   var AR = Math.cos(0.2), AI = -Math.sin(0.2);  // complex amplitude A; phase keeps t = 0, 1, 2 off the zeros of Re
-  var T0 = -3, T1 = 8;            // time range shown
+  var T0 = -8, T1 = 8;            // time range shown
   var X0 = 270, X1 = 1250;        // plot x range in slide px
   var LMIN = -3, LMAX = Math.log10(2);  // log10 range of the log region
   // y0: top of the frame; lb: bottom of the log region; z: the "0" row; y1: the x axis
@@ -20,7 +20,7 @@
   var BOT = { y0: 635, lb: 850, z: 895, y1: 925, id: "bot" };
   var BRK = 487;                  // offset of the axis break from y0 is (BRK - TOP.y0)
   var TIMES = [0, 1, 2];          // times visited one after another, t >= 0
-  var NEG = [-1, -2];             // then these, t < 0
+  var NEG = [-1, -2, -3];         // then these, t < 0
   var SUB = 5;                    // stages per time: arrow, dashed QNM, two equations, point
   var KZERO = TIMES.length * SUB + 1;        // stage: the filtered waveform is 0 for t >= 0
   var KFLIP = KZERO + NEG.length * SUB + 1;  // stage: the flipped ringdown for t < 0
@@ -138,7 +138,7 @@
       }
       put("0", X0 - 12, p.z, "td-filter-tick", "translate(-100%,-50%)");
     });
-    for (var t = -2; t <= T1; t += 2) {
+    for (var t = T0; t <= T1; t += 4) {
       put(String(t), X(t), BOT.y1 + 8, "td-filter-tick", "translate(-50%,0)");
     }
     put("t", (X0 + X1) / 2, BOT.y1 + 46, "td-filter-axlabel", "translate(-50%,0)");
@@ -169,7 +169,8 @@
     var ts = list[idx];
 
     if (sub >= 2) {
-      var a = neg ? fitAt(ts) : psiAt(ts);
+      // t >= 0: the QNM with amplitude Psi(t_k); t < 0: the unit template Q_220(t - t_k)
+      var a = neg ? [1, 0] : psiAt(ts);
       pair(svg, TOP, a[0], a[1], ts, "#d62728", "#f2a3a3", true);
     }
 
