@@ -1,0 +1,6 @@
+plunge.js  The (2,2,0) spheroidal amplitude of the chi = 0.7 point-particle plunge waveform
+           and its waveform filtered by the 220 rational filter alone, t in M from the
+           light-ring crossing, -80 <= t <= 60, step 0.1, divided by the peak modulus.
+           Source: the data release of Cheung (2608.29466), doi:10.5281/zenodo.22071387,
+           record hd_dg_c0.7_l1.0_kinfrz5e3rk4_kx2s6p3x4rtf_N8_tm237 (reduced archive).
+           Made by tasks/t04-td-filter/plunge_data.py; licence as the release.
