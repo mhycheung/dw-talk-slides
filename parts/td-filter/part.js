@@ -3,7 +3,7 @@
 // amplitude, is exactly Q_220, so the mismatch term and the filtered waveform vanish.
 // For t < 0, Psi(t) = 0 and the filter returns minus the least-squares amplitude of a QNM
 // fitted to the waveform after t: the ringdown flipped in time, -A e^{-i omega^* t}.
-// Both panels show |Re| on a log axis; exact zeros go on a separate "0" row below a break.
+// Both panels show |.| (black) and |Re .| (gray) on a log axis; exact zeros go on a separate "0" row below a break.
 (function () {
   "use strict";
 
@@ -12,7 +12,7 @@
   // time unit rescaled so that a step of 1 in t is visible.
   var WR = 2.0, WI = -0.475;      // omega_220 = WR + i WI
   var AR = Math.cos(0.2), AI = -Math.sin(0.2);  // complex amplitude A; phase keeps t = 0, 1, 2 off the zeros of Re
-  var T0 = -8, T1 = 8;            // time range shown
+  var T0 = -3, T1 = 8;            // time range shown
   var X0 = 270, X1 = 1250;        // plot x range in slide px
   var LMIN = -3, LMAX = Math.log10(2);  // log10 range of the log region
   // y0: top of the frame; lb: bottom of the log region; z: the "0" row; y1: the x axis
@@ -49,6 +49,21 @@
   function fitAt(ts) {
     var e = Math.exp(-WI * ts), c = Math.cos(WR * ts), sn = Math.sin(WR * ts);
     return [e * (AR * c + AI * sn), e * (AI * c - AR * sn)];
+  }
+
+  // |a e^{-i omega (t - ts)}|
+  function env(ar, ai, ts, t) { return Math.hypot(ar, ai) * Math.exp(WI * (t - ts)); }
+
+  // a QNM from ts on: |.| in `col`, |Re .| in `colRe`, both clipped to the log region
+  function pair(svg, p, ar, ai, ts, col, colRe, dash) {
+    var clip = "url(#td-filter-clip-" + p.id + ")", da = dash ? { "stroke-dasharray": "18 12" } : {};
+    var re = { d: logPath(function (t) { return qnm(ar, ai, ts, t); }, ts, T1, p),
+               fill: "none", stroke: colRe, "stroke-width": 4, "clip-path": clip };
+    var ab = { d: logPath(function (t) { return env(ar, ai, ts, t); }, ts, T1, p),
+               fill: "none", stroke: col, "stroke-width": 5, "clip-path": clip };
+    for (var q in da) { re[q] = da[q]; ab[q] = da[q]; }
+    el("path", re, svg);
+    el("path", ab, svg);
   }
 
   function el(name, attrs, parent) {
@@ -123,13 +138,13 @@
       }
       put("0", X0 - 12, p.z, "td-filter-tick", "translate(-100%,-50%)");
     });
-    for (var t = T0; t <= T1; t += 4) {
+    for (var t = -2; t <= T1; t += 2) {
       put(String(t), X(t), BOT.y1 + 8, "td-filter-tick", "translate(-50%,0)");
     }
     put("t", (X0 + X1) / 2, BOT.y1 + 46, "td-filter-axlabel", "translate(-50%,0)");
-    put("|\\mathrm{Re}\\,\\Psi|", X0 - 140, (TOP.y0 + TOP.y1) / 2, "td-filter-axlabel",
+    put("|\\Psi|,\\ {\\color{#999}|\\mathrm{Re}\\,\\Psi|}", X0 - 140, (TOP.y0 + TOP.y1) / 2, "td-filter-axlabel",
         "translate(-50%,-50%) rotate(-90deg)");
-    put("|\\mathrm{Re}\\,\\hat{\\Psi}|", X0 - 140, (BOT.y0 + BOT.y1) / 2, "td-filter-axlabel",
+    put("|\\hat{\\Psi}|,\\ {\\color{#999}|\\mathrm{Re}\\,\\hat{\\Psi}|}", X0 - 140, (BOT.y0 + BOT.y1) / 2, "td-filter-axlabel",
         "translate(-50%,-50%) rotate(-90deg)");
   }
 
@@ -139,13 +154,11 @@
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     frame(svg, TOP);
     frame(svg, BOT);
-    var clipTop = "url(#td-filter-clip-top)";
-
+    
     // original: zero before t = 0 (on the "0" row), the QNM after, with the jump at t = 0
     el("line", { x1: X(T0), x2: X(0), y1: TOP.z, y2: TOP.z, stroke: "#000", "stroke-width": 5 }, svg);
-    el("line", { x1: X(0), x2: X(0), y1: TOP.z, y2: LY(TOP, Math.abs(AR)), stroke: "#000", "stroke-width": 5 }, svg);
-    el("path", { d: logPath(function (t) { return qnm(AR, AI, 0, t); }, 0, T1, TOP),
-                 fill: "none", stroke: "#000", "stroke-width": 5, "clip-path": clipTop }, svg);
+    el("line", { x1: X(0), x2: X(0), y1: TOP.z, y2: LY(TOP, Math.hypot(AR, AI)), stroke: "#000", "stroke-width": 5 }, svg);
+    pair(svg, TOP, AR, AI, 0, "#000", "#999", false);
 
     // which time and sub-stage k shows; neg: the t < 0 round
     var neg = k > KZERO && k < KFLIP;
@@ -157,9 +170,7 @@
 
     if (sub >= 2) {
       var a = neg ? fitAt(ts) : psiAt(ts);
-      el("path", { d: logPath(function (t) { return qnm(a[0], a[1], ts, t); }, ts, T1, TOP),
-                   fill: "none", stroke: "#d62728", "stroke-width": 5, "stroke-dasharray": "18 12",
-                   "clip-path": clipTop }, svg);
+      pair(svg, TOP, a[0], a[1], ts, "#d62728", "#f2a3a3", true);
     }
 
     // filtered for t >= 0: exactly zero, on the "0" row
@@ -169,17 +180,21 @@
     // filtered for t < 0: -A e^{-i omega^* t}, the flipped ringdown, with the jump at t = 0
     if (k >= KFLIP) {
       var clipBot = "url(#td-filter-clip-bot)";
-      el("path", { d: logPath(function (t) { var c = fitAt(t); return c[0]; }, T0, 0, BOT),
+      el("path", { d: logPath(function (t) { return fitAt(t)[0]; }, T0, 0, BOT),
+                   fill: "none", stroke: "#999", "stroke-width": 4, "clip-path": clipBot }, svg);
+      el("path", { d: logPath(function (t) { var c = fitAt(t); return Math.hypot(c[0], c[1]); }, T0, 0, BOT),
                    fill: "none", stroke: "#000", "stroke-width": 5, "clip-path": clipBot }, svg);
-      el("line", { x1: X(0), x2: X(0), y1: BOT.z, y2: LY(BOT, Math.abs(AR)), stroke: "#000", "stroke-width": 5 }, svg);
+      el("line", { x1: X(0), x2: X(0), y1: BOT.z, y2: LY(BOT, Math.hypot(AR, AI)), stroke: "#000", "stroke-width": 5 }, svg);
     }
+    // points: |filtered| at the times visited
     var npos = k >= KZERO ? TIMES.length : idx + (sub === SUB ? 1 : 0);
     for (var j = 0; j < npos; j++) {
       el("circle", { cx: X(TIMES[j]), cy: BOT.z, r: 13, fill: "#000" }, svg);
     }
     var nneg = k >= KFLIP ? NEG.length : neg ? idx + (sub === SUB ? 1 : 0) : 0;
     for (j = 0; j < nneg; j++) {
-      el("circle", { cx: X(NEG[j]), cy: LY(BOT, Math.abs(fitAt(NEG[j])[0])), r: 13, fill: "#000" }, svg);
+      var c = fitAt(NEG[j]);
+      el("circle", { cx: X(NEG[j]), cy: LY(BOT, Math.hypot(c[0], c[1])), r: 13, fill: "#000" }, svg);
     }
 
     var tl = slide.querySelector(".td-filter-tlabel");
