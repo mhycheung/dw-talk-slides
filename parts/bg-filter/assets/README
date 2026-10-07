@@ -4,3 +4,8 @@ arXiv:2207.10870 (v2 source), converted with `pdftocairo -svg RWZ.pdf`, then cro
 the SVG viewBox to 0 0 561.553125 258 (pt); the drawing is otherwise unmodified.
 Upper panels: Re h22 (black) and Re h22 filtered by F_220 (red) for a Schwarzschild BH
 perturbed by a Gaussian pulse.
+
+Copied unchanged from the direct-wave slide part of the seminar_SBU talk:
+- oshita_fig3_top_bottom.png: Oshita+ (2509.09165) Fig. 3 (source file EMRI_0.8.pdf), rendered
+  at 300 dpi; top and bottom panels only (the middle panel, the decay rate, is removed).
+- lu_fig1_sketch.png: Lu+ (2510.01001) Fig. 1 (source file figs/horizon.png), unchanged.

@@ -20,3 +20,17 @@
   width: 1250px;
   margin: 0 auto 4px;
 }
+
+.bg-filter-dwfig {
+  position: absolute;
+  top: 160px;
+  width: 880px;
+  margin: 0;
+  text-align: center;
+}
+
+.bg-filter-dwfig img {
+  display: block;
+  height: 800px;
+  margin: 0 auto;
+}
