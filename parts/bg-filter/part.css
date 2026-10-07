@@ -34,3 +34,50 @@
   height: 800px;
   margin: 0 auto;
 }
+
+.bg-filter-td-eq {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 52px;
+}
+
+.bg-filter-td-plot {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bg-filter-td-label {
+  position: absolute;
+  left: 900px;
+  width: 360px;
+  text-align: right;
+  font-size: 64px;
+  font-weight: bold;
+  color: #000;
+}
+
+.bg-filter-td-label-top { top: 250px; }
+.bg-filter-td-label-bot { top: 680px; }
+
+.bg-filter-td-tlabel {
+  position: absolute;
+  top: 580px;
+  font-size: 40px;
+  white-space: nowrap;
+}
+
+.bg-filter-td-side {
+  position: absolute;
+  top: 290px;
+  left: 1300px;
+  width: 600px;
+  text-align: center;
+  font-size: 42px;
+}
+
+.bg-filter-td-side > div { visibility: hidden; }
+.bg-filter-td-side > div.bg-filter-td-on { visibility: visible; }
