@@ -9,3 +9,7 @@ Copied unchanged from the direct-wave slide part of the seminar_SBU talk:
 - oshita_fig3_top_bottom.png: Oshita+ (2509.09165) Fig. 3 (source file EMRI_0.8.pdf), rendered
   at 300 dpi; top and bottom panels only (the middle panel, the decay rate, is removed).
 - lu_fig1_sketch.png: Lu+ (2510.01001) Fig. 1 (source file figs/horizon.png), unchanged.
+
+- lu_fig4_late_times.svg: Lu+ (2510.01001) Fig. 4 (source file figs/late_times.pdf), converted
+  with `pdftocairo -svg`, unmodified. Frequency and damping rate of the direct wave inferred
+  from GW250114 after removing the (l=m=2, n=0,1,2) QNMs, for start times -9 to -3 M_f^det.

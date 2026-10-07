@@ -81,3 +81,17 @@
 
 .bg-filter-td-side > div { visibility: hidden; }
 .bg-filter-td-side > div.bg-filter-td-on { visibility: visible; }
+
+.bg-filter-lufit {
+  position: absolute;
+  top: 150px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.bg-filter-lufit img {
+  display: block;
+  height: 800px;
+  margin: 0 auto 4px;
+}
