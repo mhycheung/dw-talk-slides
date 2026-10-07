@@ -1,6 +1,8 @@
 // Slide td-filter-n17: Eq. (N17) of Cheung (2608.29466) applied step by step to a QNM that
 // starts abruptly at t = 0. For t >= 0 the waveform to the future of t, rescaled to unit
 // amplitude, is exactly Q_220, so the mismatch term and the filtered waveform vanish.
+// For t < 0, Psi(t) = 0 and the filter returns minus the least-squares amplitude of a QNM
+// fitted to the waveform after t: the ringdown flipped in time, -A e^{-i omega^* t}.
 // Both panels show |Re| on a log axis; exact zeros go on a separate "0" row below a break.
 (function () {
   "use strict";
@@ -10,15 +12,18 @@
   // time unit rescaled so that a step of 1 in t is visible.
   var WR = 2.0, WI = -0.475;      // omega_220 = WR + i WI
   var AR = Math.cos(0.2), AI = -Math.sin(0.2);  // complex amplitude A; phase keeps t = 0, 1, 2 off the zeros of Re
-  var T0 = -2, T1 = 8;            // time range shown
+  var T0 = -8, T1 = 8;            // time range shown
   var X0 = 270, X1 = 1250;        // plot x range in slide px
   var LMIN = -3, LMAX = Math.log10(2);  // log10 range of the log region
   // y0: top of the frame; lb: bottom of the log region; z: the "0" row; y1: the x axis
   var TOP = { y0: 250, lb: 465, z: 510, y1: 540, id: "top" };
   var BOT = { y0: 635, lb: 850, z: 895, y1: 925, id: "bot" };
   var BRK = 487;                  // offset of the axis break from y0 is (BRK - TOP.y0)
-  var TIMES = [0, 1, 2];          // times visited one after another
-  var SUB = 5;                    // stages per time: arrow, dashed QNM, psi = Q, mismatch = 0, point
+  var TIMES = [0, 1, 2];          // times visited one after another, t >= 0
+  var NEG = [-1, -2];             // then these, t < 0
+  var SUB = 5;                    // stages per time: arrow, dashed QNM, two equations, point
+  var KZERO = TIMES.length * SUB + 1;        // stage: the filtered waveform is 0 for t >= 0
+  var KFLIP = KZERO + NEG.length * SUB + 1;  // stage: the flipped ringdown for t < 0
 
   function X(t) { return X0 + (t - T0) / (T1 - T0) * (X1 - X0); }
   function LY(p, v) {
@@ -38,6 +43,14 @@
     return [e * (AR * c + AI * sn), e * (AI * c - AR * sn)];
   }
 
+  // c(ts) = (Q_220 | Psi(ts + tau))_tau / (Q_220 | Q_220)_tau for ts < 0, the least-squares
+  // amplitude of a QNM starting at ts fitted to Psi after ts: c = A e^{-i omega^* ts}.
+  // The filtered waveform there is -c. (Checked numerically against Eq. N12.)
+  function fitAt(ts) {
+    var e = Math.exp(-WI * ts), c = Math.cos(WR * ts), sn = Math.sin(WR * ts);
+    return [e * (AR * c + AI * sn), e * (AI * c - AR * sn)];
+  }
+
   function el(name, attrs, parent) {
     var n = document.createElementNS(NS, name);
     for (var k in attrs) n.setAttribute(k, attrs[k]);
@@ -47,7 +60,7 @@
 
   // |fn| on the log axis, from ta to tb, clipped to the log region of panel p
   function logPath(fn, ta, tb, p) {
-    var d = "", n = 3000;
+    var d = "", n = 5000;
     for (var i = 0; i <= n; i++) {
       var t = ta + (tb - ta) * i / n;
       var y = Math.min(LY(p, Math.abs(fn(t))), p.lb + 400);
@@ -110,7 +123,7 @@
       }
       put("0", X0 - 12, p.z, "td-filter-tick", "translate(-100%,-50%)");
     });
-    for (var t = T0; t <= T1; t += 2) {
+    for (var t = T0; t <= T1; t += 4) {
       put(String(t), X(t), BOT.y1 + 8, "td-filter-tick", "translate(-50%,0)");
     }
     put("t", (X0 + X1) / 2, BOT.y1 + 46, "td-filter-axlabel", "translate(-50%,0)");
@@ -134,25 +147,39 @@
     el("path", { d: logPath(function (t) { return qnm(AR, AI, 0, t); }, 0, T1, TOP),
                  fill: "none", stroke: "#000", "stroke-width": 5, "clip-path": clipTop }, svg);
 
-    var last = k > TIMES.length * SUB;            // final stage: the whole filtered waveform
-    var idx = last ? TIMES.length : Math.floor((k - 1) / SUB);
-    var sub = last || k === 0 ? 0 : (k - 1) % SUB + 1;
-    var ts = TIMES[idx];
+    // which time and sub-stage k shows; neg: the t < 0 round
+    var neg = k > KZERO && k < KFLIP;
+    var r = neg ? k - KZERO - 1 : k - 1;
+    var list = neg ? NEG : TIMES;
+    var idx = Math.floor(r / SUB);
+    var sub = (k === 0 || k === KZERO || k >= KFLIP) ? 0 : r % SUB + 1;
+    var ts = list[idx];
 
     if (sub >= 2) {
-      var a = psiAt(ts);
+      var a = neg ? fitAt(ts) : psiAt(ts);
       el("path", { d: logPath(function (t) { return qnm(a[0], a[1], ts, t); }, ts, T1, TOP),
                    fill: "none", stroke: "#d62728", "stroke-width": 5, "stroke-dasharray": "18 12",
                    "clip-path": clipTop }, svg);
     }
 
-    // filtered: exactly zero for t >= 0, so it lives on the "0" row
-    if (last) {
+    // filtered for t >= 0: exactly zero, on the "0" row
+    if (k >= KZERO) {
       el("line", { x1: X(0), x2: X1, y1: BOT.z, y2: BOT.z, stroke: "#000", "stroke-width": 5 }, svg);
     }
-    var npts = idx + (sub === SUB ? 1 : 0);
-    for (var j = 0; j < npts; j++) {
+    // filtered for t < 0: -A e^{-i omega^* t}, the flipped ringdown, with the jump at t = 0
+    if (k >= KFLIP) {
+      var clipBot = "url(#td-filter-clip-bot)";
+      el("path", { d: logPath(function (t) { var c = fitAt(t); return c[0]; }, T0, 0, BOT),
+                   fill: "none", stroke: "#000", "stroke-width": 5, "clip-path": clipBot }, svg);
+      el("line", { x1: X(0), x2: X(0), y1: BOT.z, y2: LY(BOT, Math.abs(AR)), stroke: "#000", "stroke-width": 5 }, svg);
+    }
+    var npos = k >= KZERO ? TIMES.length : idx + (sub === SUB ? 1 : 0);
+    for (var j = 0; j < npos; j++) {
       el("circle", { cx: X(TIMES[j]), cy: BOT.z, r: 13, fill: "#000" }, svg);
+    }
+    var nneg = k >= KFLIP ? NEG.length : neg ? idx + (sub === SUB ? 1 : 0) : 0;
+    for (j = 0; j < nneg; j++) {
+      el("circle", { cx: X(NEG[j]), cy: LY(BOT, Math.abs(fitAt(NEG[j])[0])), r: 13, fill: "#000" }, svg);
     }
 
     var tl = slide.querySelector(".td-filter-tlabel");
@@ -168,12 +195,14 @@
       tl.style.visibility = "hidden";
     }
 
-    slide.querySelector(".td-filter-psi").classList.toggle("td-filter-on", sub >= 3);
-    slide.querySelector(".td-filter-mis").classList.toggle("td-filter-on", sub >= 4);
+    slide.querySelector(".td-filter-psi").classList.toggle("td-filter-on", !neg && sub >= 3);
+    slide.querySelector(".td-filter-mis").classList.toggle("td-filter-on", !neg && sub >= 4);
+    slide.querySelector(".td-filter-zero").classList.toggle("td-filter-on", neg && sub >= 3);
+    slide.querySelector(".td-filter-proj").classList.toggle("td-filter-on", neg && sub >= 4);
   }
 
   Deck.widget("td-filter-n17", {
-    steps: TIMES.length * SUB + 1,
+    steps: KFLIP,
     step: function (slide, k) { draw(slide, k); }
   });
 })();
