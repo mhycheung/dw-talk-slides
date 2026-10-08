@@ -230,7 +230,7 @@
 
   var TILES = [                      // record: tasks/t05-horizon-modes/context.md, subcontext/lit_*.md
     { schw: false, cross: [1], ring: [2], track: 0 },        // Zimmerman+: omega_H^(2) at next order
-    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 2 }, // Oshita+: hat D(omega_G) e^{-i int omega_G}
+    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 1 }, // Oshita+: omega_G -> omega_H^(1) (their l.204)
     { schw: true, cross: [1, 2, 3, 4], ring: [], track: 0 },  // Kuntz+: all vanish, Schwarzschild
     { schw: true, cross: [1], ring: [], track: 1 },           // Ma+: e^{-kappa u} pieces cancel; omega ~ omega_G
     { schw: false, cross: [1, 2, 3, 4], ring: [], track: 0 }, // Kubota+: all cancel
