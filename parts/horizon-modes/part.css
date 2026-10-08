@@ -187,6 +187,19 @@
   margin-bottom: 16px;
 }
 
+/* "filtered/unfiltered" is inserted (no gap before it appears) in red, and turns black with the answer. */
+#horizon-modes-questions .horizon-modes-fu:not(.shown) {
+  display: none;
+}
+
+.horizon-modes-fu {
+  color: #d62828;
+}
+
+.horizon-modes-qbox:has(.horizon-modes-a.shown) .horizon-modes-fu {
+  color: inherit;
+}
+
 /* Answers: indented under the question, set off by a bar on the left (user, 2026-10-08). */
 .horizon-modes-a {
   margin-left: 30px;
