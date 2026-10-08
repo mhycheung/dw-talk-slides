@@ -8,6 +8,11 @@
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
 <link rel="stylesheet" href="common/deck.css">
 <link rel="stylesheet" href="parts/title/part.css">
+<link rel="stylesheet" href="parts/bg-filter/part.css">
+<link rel="stylesheet" href="parts/td-filter/part.css">
+<link rel="stylesheet" href="parts/horizon-modes/part.css">
+<link rel="stylesheet" href="parts/lightring-paper/part.css">
+<link rel="stylesheet" href="parts/closing/part.css">
 </head>
 <body>
 <div class="deck">
@@ -21,13 +26,242 @@
     <img class="title-logo-croucher" src="parts/title/assets/croucher_logo.svg" alt="Croucher Foundation">
   </div>
 </section>
+<!-- part: bg-filter -->
+<section class="slide" id="bg-filter-ma">
+  <h1 class="title">The rational filter</h1>
+  <div class="bg-filter-eq">
+    $$\mathcal{F}(\omega) = \prod_{lmn} \frac{\omega - \omega_{lmn}}{\omega - \omega_{lmn}^{*}}$$
+  </div>
+  <div class="bg-filter-fig">
+    <img src="parts/bg-filter/assets/ma_rwz_filter_upper.svg" alt="Ma+ (2207.10870), Fig. 3, upper panels: Zerilli waveform before and after the rational filter">
+    <span class="cite">Ma+ (2207.10870)</span>
+  </div>
+</section>
+<!-- part: td-filter -->
+<script src="parts/td-filter/assets/plunge.js"></script>
+<section class="slide" id="td-filter-deriv">
+  <div class="td-filter-deriv">
+    <div class="td-filter-dlabel">frequency domain</div>
+    <div>$$\mathcal{F}(\omega) = \frac{\omega - \omega_{\ell mn}}{\omega - \omega_{\ell mn}^*}$$<span data-step="1">$$\;= 1 - \frac{2i\,\mathrm{Im}(\omega_{\ell mn})}{\omega - \omega_{\ell mn}^*}$$</span></div>
+    <div class="td-filter-dlabel" data-step="2">time domain</div>
+    <div data-step="2">$$F(\tau) = \sqrt{2\pi}\left[\delta(\tau) + 2\,\mathrm{Im}(\omega_{\ell mn})\, e^{-i\omega_{\ell mn}^*\tau}\,\Theta(-\tau)\right]$$</div>
+    <div class="td-filter-dtext" data-step="3">The filtered waveform in the time domain is a convolution:</div>
+    <div class="td-filter-dlabel" data-step="3">frequency domain</div>
+    <div data-step="3">$$\tilde{\Psi}(\omega) \to \mathcal{F}(\omega)\,\tilde{\Psi}(\omega)$$</div>
+    <div class="td-filter-dlabel" data-step="3">time domain</div>
+    <div data-step="3">$$\hat{\Psi}(t) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} F(\tau)\,\Psi(t-\tau)\,d\tau$$</div>
+    <div data-step="4"></div>
+    <div data-step="4">$$\hat{\Psi}(t) = \Psi(t) - \frac{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,\Psi(t+\tau)\,d\tau}{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,e^{-i\omega_{\ell mn}\tau}\,d\tau}$$</div>
+  </div>
+  <div class="td-filter-see"><span class="cite">See the appendix of <u>Cheung</u> (2608.29466)</span></div>
+</section>
+<section class="slide" id="td-filter-overlap">
+  <div class="td-filter-ov">
+    <div>$$\hat{\Psi}(t) = \Psi(t) - \frac{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,\Psi(t+\tau)\,d\tau}{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,e^{-i\omega_{\ell mn}\tau}\,d\tau}$$</div>
+    <div data-step="1">$$\hat{\Psi}(t) = \Psi(t) - \frac{\left( Q_{\ell mn} \,|\, \Psi(t+\tau)\right)_\tau}{\left(Q_{\ell mn} \,|\, Q_{\ell mn} \right)_\tau}$$</div>
+  </div>
+  <div class="td-filter-ovtext" data-step="2">Effect of filter: subtract from the waveform its &ldquo;overlap&rdquo; with a QNM to its future</div>
+  <div class="td-filter-see"><span class="cite">See the appendix of <u>Cheung</u> (2608.29466)</span></div>
+</section>
+<section class="slide" id="td-filter-n17">
+  <div class="td-filter-eq">
+    $$\hat{\Psi}(t) = \Psi(t) - \frac{\left( Q_{220} \,|\, \Psi(t+\tau)\right)_\tau}{\left(Q_{220} \,|\, Q_{220} \right)_\tau}$$
+    <div class="td-filter-eqtext">Effect of filter: subtract from the waveform its &ldquo;overlap&rdquo; with a QNM to its future</div>
+  </div>
+  <svg class="td-filter-plot" data-clip="td-filter-n17-clip-" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+  <div class="td-filter-axes"></div>
+  <div class="td-filter-label td-filter-label-top">original</div>
+  <div class="td-filter-label td-filter-label-bot">filtered</div>
+  <div class="td-filter-tlabel"></div>
+  <div class="td-filter-unit" data-step="21">$$|\mathcal{F}(\omega)| = \left|\frac{\omega - \omega_{220}}{\omega - \omega_{220}^*}\right| = 1$$</div>
+</section>
+<section class="slide" id="td-filter-diff">
+  <div class="td-filter-eq">
+    $$\hat{\Psi}(t) = \Psi(t) - \frac{\left( Q_{220} \,|\, \Psi(t+\tau)\right)_\tau}{\left(Q_{220} \,|\, Q_{220} \right)_\tau}$$
+    <div class="td-filter-eqtext">Effect of filter: subtract from the waveform its &ldquo;overlap&rdquo; with a QNM to its future</div>
+  </div>
+  <svg class="td-filter-plot" data-clip="td-filter-diff-clip-" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+  <div class="td-filter-axes"></div>
+  <div class="td-filter-label td-filter-label-top">original</div>
+  <div class="td-filter-label td-filter-label-bot">filtered</div>
+  <div class="td-filter-tlabel"></div>
+</section>
+<section class="slide" id="td-filter-flip">
+  <div class="td-filter-mini">
+    <svg class="td-filter-plot" data-clip="td-filter-flip-clip-" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+    <div class="td-filter-axes"></div>
+    <div class="td-filter-label td-filter-label-top">original</div>
+    <div class="td-filter-label td-filter-label-bot">filtered</div>
+    <div class="td-filter-tlabel"></div>
+  </div>
+  <ul class="td-filter-points">
+    <li data-step="1">The filter redistributes power in time, $|\mathcal{F}(\omega)| = 1$.</li>
+    <li data-step="2">If the waveform is a clean QNM at times $\tau > t$, the filter removes it cleanly and deposits the power to earlier times.</li>
+    <li data-step="3">The filter does not affect the shape of other QNMs.</li>
+  </ul>
+</section>
+<!-- part: bg-filter -->
+<section class="slide" id="bg-filter-dw">
+  <h1 class="title">Direct waves</h1>
+  <figure class="bg-filter-dwfig" style="left:40px">
+    <img src="parts/bg-filter/assets/oshita_fig3_top_bottom.png" alt="Oshita+ (2509.09165), Fig. 3, top and bottom panels">
+    <span class="cite">Oshita+ (2509.09165)</span>
+  </figure>
+  <figure class="bg-filter-dwfig" style="left:1000px">
+    <img src="parts/bg-filter/assets/lu_fig1_sketch.png" alt="Lu+ (2510.01001), Fig. 1">
+    <span class="cite">Lu+ (2510.01001)</span>
+  </figure>
+</section>
+<section class="slide" id="bg-filter-gw250114">
+  <h1 class="title">GW250114</h1>
+  <div class="bg-filter-lufit">
+    <img src="parts/bg-filter/assets/lu_fig2_whitened_strain.svg" alt="Lu+ (2510.01001), Fig. 2: whitened GW250114 strain, original, with QNMs removed, and with the direct wave removed">
+    <span class="cite">Lu+ (2510.01001)</span>
+  </div>
+</section>
+<!-- part: horizon-modes -->
+<script src="parts/horizon-modes/assets/horizon-modes-traj.js"></script>
+<section class="slide" id="horizon-modes-main">
+  <h1 class="title">Horizon modes</h1>
+  <canvas class="horizon-modes-canvas" style="left:40px; top:160px; width:860px; height:860px"></canvas>
+
+  <div class="horizon-modes-right">
+    <div class="horizon-modes-eq">
+      <div class="horizon-modes-sum">
+        <span>$G(r_p)\,S(r_p) \sim e^{-im\Omega_H u}\,$</span><span class="horizon-modes-br">$\Big[$</span><span class="horizon-modes-term" data-n="1">$\color{#ee4266}c_1\epsilon$</span><span class="horizon-modes-term" data-n="2">${}+{}\color{#ff8c00}c_2\epsilon^2$</span><span class="horizon-modes-term" data-n="3">${}+{}\color{#2a9d8f}c_3\epsilon^3$</span><span class="horizon-modes-term" data-n="4">${}+{}\color{#3a86ff}c_4\epsilon^4$</span><span class="horizon-modes-term" data-n="5">${}+{}\color{#8338ec}c_5\epsilon^5$</span><span class="horizon-modes-term" data-n="6">${}+{}\cdots$</span><span class="horizon-modes-br">$\Big]$</span>
+      </div>
+      <div class="horizon-modes-def">$\epsilon \equiv r_p(u) - r_+ \propto e^{-\kappa u}$</div>
+    </div>
+    <svg class="horizon-modes-plane" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+    <div class="horizon-modes-labs"></div>
+    <span class="cite horizon-modes-cite">Mino+ (0809.2814)</span>
+  </div>
+</section>
+
+<section class="slide" id="horizon-modes-screened">
+  <h1 class="title">Horizon modes are screened</h1>
+  <div class="horizon-modes-tiles">
+    <div class="horizon-modes-tile" data-step="1" data-tile="0">
+      <div class="horizon-modes-filt">Kerr, unfiltered</div>
+      <span class="cite">Zimmerman+ (1106.0782)</span>
+      <div class="horizon-modes-teq horizon-modes-zc">$$\psi_4\sim\int\! d\omega\,e^{-i\omega u}\left[\frac{\tilde Z_1}{\omega-\omega_H^{(1)}}+\frac{\tilde Z_2}{\omega-\omega_H^{(2)}}+\cdots\right]$$$$\tilde Z_1\propto(\omega-\omega_H^{(1)})(\omega-\omega_H^{(2)})$$$$\tilde Z_2(\omega_H^{(2)})\mathrel{\overset{?}{\neq}}0$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+    <div class="horizon-modes-tile" data-step="2" data-tile="1">
+      <div class="horizon-modes-filt">Kerr, filtered(?)</div>
+      <span class="cite">Oshita+ (2509.09165)</span>
+      <div class="horizon-modes-teq">$$\psi_4\sim\hat D(\omega_G)\,e^{-i\int^u\omega_G\,du'}$$$$\hat D(\omega)=\frac{(\omega-\omega_H^{(1)})(\omega-\omega_H^{(2)})}{2i\omega B^{\rm in}(\omega)}$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+    <div class="horizon-modes-tile" data-step="3" data-tile="2">
+      <div class="horizon-modes-filt">Schwarzschild, unfiltered</div>
+      <span class="cite">Kuntz+ (2606.07173)</span>
+      <div class="horizon-modes-teq">$$\int\! d\omega\,e^{-i\omega u}\,G(\omega)$$$$\times\int^{\tilde t(u)}\!\! dt\,S(t)\,e^{i\omega t}=0$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+    <div class="horizon-modes-tile" data-step="4" data-tile="3">
+      <div class="horizon-modes-filt">Schwarzschild, filtered</div>
+      <span class="cite">Ma+ (2607.06677)</span>
+      <div class="horizon-modes-teq">$$\Psi_{\rm DW}=\sum_n E_n e^{-i\bar\omega_n u}\!\int_{r_+}^{R_{\rm min}(u)}\!\!(\dots)$$$$\approx e^{-i\int^u\omega_G\,du'}$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+    <div class="horizon-modes-tile" data-step="5" data-tile="4">
+      <div class="horizon-modes-filt">Kerr, filtered</div>
+      <span class="cite">Sun+ (2608.23209)</span>
+      <span class="cite horizon-modes-weller">Weller+ (2609.09531)</span>
+      <div class="horizon-modes-teq">$$\Psi_{\rm DW}\sim\int\! d\omega\,e^{-i\omega u}\,\mathcal F(\omega)\,\frac{\tilde{\mathcal I}(\omega)}{i\omega B^{\rm in}(\omega)}$$</div>
+      <div class="horizon-modes-sunline horizon-modes-sun1">$\omega_{\rm DW}(u)\to\omega_H^{(2)}$</div>
+      <div class="horizon-modes-sunline horizon-modes-sun2">$\omega_{\rm DW}(u)\to\omega_H^{(3)}$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+    <div class="horizon-modes-tile" data-step="6" data-tile="5">
+      <div class="horizon-modes-filt">Kerr, unfiltered</div>
+      <span class="cite">Kubota+ (2609.07326)</span>
+      <div class="horizon-modes-teq">$$h\sim\int\! d\omega\,e^{-i\omega u}\,\Pi(\omega)\!\int\! dt'\,e^{iP(\omega,t')}$$$$\Pi\propto\frac{(\omega-\omega_H^{(1)})(\omega-\omega_H^{(2)})}{B^{\rm inc}(\omega)}$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+  </div>
+  <div class="horizon-modes-also">See also: <span class="cite">De Amicis+ (2506.21668)</span>, <span class="cite">Rosato+ (2603.20490)</span>, <span class="cite">Giataganas+ (2609.27920)</span></div>
+</section>
+
+<section class="slide" id="horizon-modes-questions">
+  <h1 class="title">Three questions</h1>
+  <div class="horizon-modes-qbox" data-step="1">
+    <div class="horizon-modes-q">Will we see horizon modes at late times?</div>
+    <div class="horizon-modes-a" data-step="2">No, they are screened.</div>
+  </div>
+  <div class="horizon-modes-qbox" data-step="3">
+    <div class="horizon-modes-q">Will the <span class="horizon-modes-fu" data-step="4">filtered/unfiltered </span>waveform <i>approach</i> an $\omega_H^{(n)}$ at intermediate times? Which $\omega_H^{(n)}$?</div>
+    <div class="horizon-modes-a" data-step="5">
+      <div>Filtered: <span class="cite">Oshita+ (2509.09165)</span>, <span class="cite">Lu+ (2510.01001)</span>, <span class="cite">Kankani+ (2603.15474)</span>, <span class="cite">Kankani+ (2607.02380)</span>, <span class="cite">Han+ (2607.08570)</span>, <span class="cite">Sun+ (2608.23209)</span>, <span class="cite">Weller+ (2609.09531)</span></div>
+      <div>Unfiltered: <span class="cite">Chung+ (2606.06592)</span>, <span class="cite">Dyer+ (2606.25021)</span></div>
+    </div>
+  </div>
+  <div class="horizon-modes-qbox horizon-modes-qkey" data-step="6">
+    <div class="horizon-modes-q">Is most of the filtered waveform sourced near the horizon?</div>
+    <div class="horizon-modes-a" data-step="7">No. <span class="cite"><u>Cheung</u> (2608.29466) accepted by PRD</span></div>
+  </div>
+</section>
+<!-- part: lightring-paper -->
+<script src="parts/lightring-paper/assets/lightring-paper-traj.js"></script>
+<section class="slide" id="lightring-paper-plunge">
+  <canvas class="lightring-paper-canvas" style="left:530px; top:100px; width:860px; height:860px"></canvas>
+  <span class="cite lightring-paper-own"><u>Cheung</u> (2608.29466)</span>
+</section>
+
+<section class="slide" id="lightring-paper-waveform">
+  <div class="lightring-paper-snr" data-step="2">SNR $\sim 0.7$ for GW250114 from within light ring</div>
+  <!-- the finished plunge, placed where the previous slide has it; part.js shrinks it to the
+       left (lightring-paper-small) on arrival -->
+  <canvas class="lightring-paper-canvas" style="left:530px; top:100px; width:860px; height:860px"></canvas>
+  <!-- the paper's figure, split in the blank band between its panels (rows 0-888 and
+       889-1780 of 1781 at 200 dpi); 1120 px wide, so the top part is 357.77 px tall -->
+  <img class="lightring-paper-fig" src="parts/lightring-paper/assets/cheung_waveform_top.png" alt=""
+       style="left:760px; top:200px; width:1120px">
+  <img class="lightring-paper-fig" src="parts/lightring-paper/assets/cheung_waveform_bottom.png" alt=""
+       style="left:760px; top:557.77px; width:1120px" data-step="1">
+  <span class="cite lightring-paper-own"><u>Cheung</u> (2608.29466)</span>
+</section>
+<!-- part: td-filter -->
+<section class="slide" id="td-filter-plunge">
+  <div class="td-filter-eq">
+    $$\hat{\Psi}(t) = \Psi(t) - \frac{\left( Q_{220} \,|\, \Psi(t+\tau)\right)_\tau}{\left(Q_{220} \,|\, Q_{220} \right)_\tau}$$
+    <div class="td-filter-eqtext">Effect of filter: subtract from the waveform its &ldquo;overlap&rdquo; with a QNM to its future</div>
+  </div>
+  <svg class="td-filter-plot" data-clip="td-filter-plunge-clip-" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+  <div class="td-filter-axes"></div>
+  <div class="td-filter-label td-filter-label-top">original</div>
+  <div class="td-filter-label td-filter-label-bot">filtered</div>
+  <div class="td-filter-tlabel"></div>
+  <div class="td-filter-nonqnm" data-step="17">filtering non-QNM waveforms $\rightarrow$ nontrivial redistribution of power</div>
+</section>
+<!-- part: closing -->
+<section class="slide" id="closing-statements">
+  <h1 class="title">Closing statements</h1>
+  <ul class="closing-list">
+    <li data-step="1">The rational filter redistributes waveform power in time</li>
+    <li data-step="2">What we call the direct wave is simply the few decaying cycles of the redistributed QNM power</li>
+    <li data-step="3">Direct waves are not as “direct” as we think they are</li>
+    <li data-step="4">However, I will not call the filtered waveform “unphysical”</li>
+    <li data-step="5">Studying the filtered waveform could still be insightful</li>
+    <li data-step="6">The rational filter remains to be a superb tool</li>
+  </ul>
+  <div class="closing-fig" id="closing-fig">
+    <img src="parts/closing/assets/cheung_waveform_top.png" alt="">
+    <img src="parts/closing/assets/cheung_waveform_bottom.png" alt="">
+    <span class="cite"><u>Cheung</u> (2608.29466)</span>
+  </div>
+</section>
 <div class="deck-progress"><div class="deck-progress-track"><div class="deck-progress-fill"></div></div><div class="deck-progress-knob"></div></div>
 <div class="deck-clock"></div>
 </div>
 <script src="vendor/katex/katex.min.js"></script>
 <script src="vendor/katex/auto-render.min.js"></script>
 <script src="common/deck.js"></script>
-
+<script src="parts/td-filter/part.js"></script>
+<script src="parts/horizon-modes/part.js"></script>
+<script src="parts/lightring-paper/part.js"></script>
+<script src="parts/closing/part.js"></script>
 <script>Deck.start();</script>
 </body>
 </html>
