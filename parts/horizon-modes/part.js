@@ -233,7 +233,7 @@
     { schw: false, cross: [1], dcross: [2], ring: [], track: 0 }, // Zimmerman+: omega_H^(1) cancelled exactly; omega_H^(2) cancelled at leading order only (dashed), returns at next order
     { schw: false, cross: [1, 2, 3, 4], ring: [], track: 1 }, // Oshita+: omega_G -> omega_H^(1) (their l.204)
     { schw: true, cross: [1, 2, 3, 4], ring: [], track: 0 },  // Kuntz+: all vanish, Schwarzschild
-    { schw: true, cross: [1], ring: [], track: 1 },           // Ma+: e^{-kappa u} pieces cancel; omega ~ omega_G
+    { schw: true, cross: [1], ring: [], track: 1, fade: true }, // Ma+: e^{-kappa u} pieces cancel; omega ~ omega_G(u), no limit stated: the track fades out before omega_H^(1)
     { schw: false, cross: [1, 2, 3, 4], ring: [], track: 2, track2: 3 }, // Sun+: v1 omega_DW -> omega_H^(2); last stage: -> omega_H^(3) (v2, Weller+)
     { schw: false, cross: [1, 2, 3, 4], ring: [], track: 0 }  // Kubota+: all cancel
   ];
@@ -264,6 +264,31 @@
     tile.appendChild(d);
   }
 
+  // A track that is solid at first, then breaks into dashes that fade out, ending with a
+  // faint arrowhead short of the target: a frequency that follows omega_G(u) with no stated limit.
+  function fadingTrack(svg, p0, p1, p2, p3) {
+    var N = 48, T_SOLID = 0.4, T_END = 0.85, A_END = 0.08;
+    function P(t) {
+      var u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
+      return [a * p0[0] + b * p1[0] + c * p2[0] + d * p3[0], a * p0[1] + b * p1[1] + c * p2[1] + d * p3[1]];
+    }
+    function alpha(t) { return t < T_SOLID ? 1 : 1 - (1 - A_END) * (t - T_SOLID) / (T_END - T_SOLID); }
+    for (var k = 0; k < N; k++) {
+      var t0 = T_END * k / N, t1 = T_END * (k + 1) / N;
+      if (t0 >= T_SOLID && k % 2 === 1) continue;        // dashes after the solid part
+      var q0 = P(t0), q1 = P(t1);
+      el(svg, "line", { x1: q0[0], y1: q0[1], x2: q1[0], y2: q1[1], stroke: PURPLE, "stroke-width": 4,
+                        "stroke-linecap": "butt", opacity: alpha(t0).toFixed(3) });
+    }
+    var pe = P(T_END), pd = P(T_END - 0.02), dx = pe[0] - pd[0], dy = pe[1] - pd[1];
+    var L = Math.hypot(dx, dy); dx /= L; dy /= L;
+    var h = 11, w = 6;
+    el(svg, "path", { d: "M" + (pe[0] + dx * h) + "," + (pe[1] + dy * h) +
+                         " L" + (pe[0] - dy * w) + "," + (pe[1] + dx * w) +
+                         " L" + (pe[0] + dy * w) + "," + (pe[1] - dx * w) + " z",
+                      fill: PURPLE, opacity: A_END });
+  }
+
   function build(slide) {
     if (built) return;
     built = true;
@@ -272,7 +297,7 @@
       var T = TILES[i], tile = tiles[i], svg = tile.querySelector(".horizon-modes-tplot");
       var defs = el(svg, "defs", {});
       var mk = el(defs, "marker", { id: "horizon-modes-tarrow-" + i, viewBox: "0 0 10 10", refX: 8, refY: 5,
-                                    markerWidth: 5, markerHeight: 5, orient: "auto" });
+                                    markerWidth: 4.5, markerHeight: 4.5, orient: "auto" });
       el(mk, "path", { d: "M0,0 L10,5 L0,10 z", fill: PURPLE });
       var ax = el(defs, "marker", { id: "horizon-modes-taxis-" + i, viewBox: "0 0 10 10", refX: 9, refY: 5,
                                     markerWidth: 6, markerHeight: 6, orient: "auto" });
@@ -284,11 +309,13 @@
       lab(tile, svg, "-\\mathrm{Im}\\,\\omega", X0 - 10, (Y0 + Y1) / 2, "translate(-50%, -50%) rotate(-90deg) translate(0, -60%)");
       var re = T.schw ? 0 : RE_H;
       var targets = T.track2 ? [T.track, T.track2] : (T.track ? [T.track] : []);
-      for (var q = 0; q < targets.length; q++) {   // from the right, low damping, curving onto omega_H^(target)
+      for (var q = 0; q < targets.length; q++) {   // from the right at low damping, then straight up into omega_H^(target)
         var tx = X(re), ty = Y(targets[q] * DK), sx = X(0.98), sy = Y(0.04);
-        var cx = X(re + 0.08), cy = sy;
-        var L = Math.hypot(tx - cx, ty - cy), ex = tx + (cx - tx) * 15 / L, ey = ty + (cy - ty) * 15 / L;
-        el(svg, "path", { d: "M" + sx + "," + sy + " Q" + cx + "," + cy + " " + ex + "," + ey,
+        var c1x = X(re + 0.12), c1y = sy;                     // leave the start horizontally
+        var c2x = tx, c2y = Y(Math.max(0.04, targets[q] * DK - 0.14)); // arrive vertically from below
+        var ex = tx, ey = ty + 15;                            // stop short of the dot
+        if (T.fade) { fadingTrack(svg, [sx, sy], [c1x, c1y], [c2x, c2y], [ex, ey]); continue; }
+        el(svg, "path", { d: "M" + sx + "," + sy + " C" + c1x + "," + c1y + " " + c2x + "," + c2y + " " + ex + "," + ey,
                           fill: "none", stroke: PURPLE, "stroke-width": 4,
                           "class": "horizon-modes-track" + (q + 1),
                           "marker-end": "url(#horizon-modes-tarrow-" + i + ")" });
