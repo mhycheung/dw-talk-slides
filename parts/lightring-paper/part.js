@@ -1,8 +1,8 @@
 // lightring-paper-plunge: a particle plunging into a Kerr black hole (chi = 0.7), the
 // trajectory of Cheung (2608.29466), purple outside the prograde light ring and red inside
 // it, as in the paper's figure; plays on arrival, centred, no steps. Arriving backwards draws
-// the finished plunge at once. (The waveform figure and the SNR line are the next slide,
-// lightring-paper-waveform, part.html only.)
+// the finished plunge at once. On the next slide, lightring-paper-waveform, the finished
+// plunge shrinks from the centre to the left (CSS transition) beside the waveform figure.
 // Outside the light ring the particle moves uniformly in coordinate time; inside, uniformly
 // in arc length with an ease-out (coordinate time diverges at the horizon).
 (function () {
@@ -111,6 +111,30 @@
     step: function (slide, k, dir) {
       if (dir !== -1) play(slide);
       else draw(slide, 2);             // arriving backwards: the finished plunge
+    }
+  });
+
+  // The finished plunge, drawn at full size (transform removed, so that the canvas bitmap has
+  // the 860 px resolution), then shrunk to the left: animated on arrival from the plunge
+  // slide, at once otherwise.
+  Deck.widget("lightring-paper-waveform", {
+    steps: 0,
+    enter: function (slide) { slide.lightringPaperArrived = false; },
+    leave: function (slide) {},
+    step: function (slide, k, dir) {
+      if (slide.lightringPaperArrived) return;   // later stages: the canvas stays put
+      slide.lightringPaperArrived = true;
+      var c = slide.querySelector(".lightring-paper-canvas");
+      var top = slide.querySelector(".lightring-paper-fig");     // the upper panel
+      c.classList.remove("lightring-paper-shrink", "lightring-paper-small");
+      top.classList.remove("lightring-paper-fadein");
+      draw(slide, 2);
+      if (k === 0 && dir !== -1) {
+        void c.offsetWidth;                      // commit the full-size state
+        c.classList.add("lightring-paper-shrink");
+        top.classList.add("lightring-paper-fadein");
+      }
+      c.classList.add("lightring-paper-small");
     }
   });
 })();

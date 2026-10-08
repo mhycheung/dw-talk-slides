@@ -2,6 +2,28 @@
   position: absolute;
 }
 
+/* The plunge on the waveform slide: 640 px wide (scale 640/860), centred at (400, 557.77),
+   level with the boundary between the two panels; it starts at the plunge slide's place
+   (860 px, centred at (960, 530)) and shrinks into this one. */
+.lightring-paper-canvas.lightring-paper-small {
+  transform: translate(-560px, 27.77px) scale(0.744186);
+}
+
+.lightring-paper-canvas.lightring-paper-shrink {
+  transition: transform 1.2s ease-in-out;
+  z-index: 1;                        /* above the figure while it passes over it */
+}
+
+/* The upper panel fades in while the plunge leaves its place. */
+.lightring-paper-fig.lightring-paper-fadein {
+  animation: lightring-paper-fadein 0.6s ease-in 0.7s backwards;
+}
+
+@keyframes lightring-paper-fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .lightring-paper-fig {
   position: absolute;
 }
