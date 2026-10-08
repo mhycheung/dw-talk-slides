@@ -22,14 +22,11 @@
   var PX = 36, PY = 26;
 
   var NS = "http://www.w3.org/2000/svg";
-  // Toy 220 mode: same quality factor as Schwarzschild 220 (M omega = 0.3737 - 0.0890 i),
-  // time unit rescaled so that a step of 1 in t is visible.
-  var WR = 2.0, WI = -0.475;      // omega_220 = WR + i WI
+  // Schwarzschild 220 and 330 modes, M omega, with M = 1 (t in units of M)
+  var WR = 0.3737, WI = -0.0890;  // omega_220 = WR + i WI
   var W220 = [WR, WI];
-  // Schwarzschild 330 (M omega = 0.5994 - 0.0927 i) in the same rescaled units:
-  // each part scaled by the ratio of the 330 and 220 parts
-  var W330 = [WR * 0.5994 / 0.3737, WI * 0.0927 / 0.0890];
-  var AR = Math.cos(0.2), AI = -Math.sin(0.2);  // complex amplitude A; phase keeps t = 0, 1, 2 off the zeros of Re
+  var W330 = [0.5994, -0.0927];
+  var AR = Math.cos(0.2), AI = -Math.sin(0.2);  // complex amplitude A; phase keeps t = 0, 5, 10 off the zeros of Re
 
   // Per-slide axes, set by base(): time range, x range in slide px, log10 range, "0" row
   var T0, T1, X0, X1, LMIN, LMAX = Math.log10(2), ZERO;
@@ -226,12 +223,12 @@
   }
 
   // ---------------------------------------------------------------- td-filter-n17
-  var TIMES = [0, 1, 2];          // times visited one after another, t >= 0
-  var NEG = [-1, -2, -3];         // then these, t < 0
+  var TIMES = [0, 5, 10];         // times visited one after another, t >= 0
+  var NEG = [-5, -10, -15];       // then these, t < 0
   var SUB = 3;                    // stages per time: arrow, dashed QNM, point
   var KZERO = TIMES.length * SUB + 1;        // stage: the filtered waveform is 0 for t >= 0
   var KFLIP = KZERO + NEG.length * SUB + 1;  // stage: the flipped ringdown for t < 0
-  var CFG_N17 = { t0: -8, t1: 8, lmin: -3, zero: true, centre: true, tick: 1, tlab: 4, xlabel: "t" };
+  var CFG_N17 = { t0: -40, t1: 40, lmin: -3, zero: true, centre: true, tick: 5, tlab: 20, xlabel: "t/M" };
 
   function draw(slide, k) {
     var svg = base(slide, CFG_N17);
@@ -284,7 +281,7 @@
   // Waveform 330, filter 220. Per time: arrow, dashed Psi(t_k) Q_220, point at
   // |F(omega_330) Psi(t_k)|; then the whole filtered waveform for t >= 0.
   var DSUB = 3, DLAST = TIMES.length * DSUB + 1;
-  var CFG_DIFF = { t0: -2, t1: 8, lmin: -3, zero: true, centre: true, tick: 1, tlab: 2, xlabel: "t" };
+  var CFG_DIFF = { t0: -10, t1: 40, lmin: -3, zero: true, centre: true, tick: 5, tlab: 10, xlabel: "t/M" };
 
   function drawDiff(slide, k) {
     var svg = base(slide, CFG_DIFF);
