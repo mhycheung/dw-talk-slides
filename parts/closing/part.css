@@ -1,11 +1,11 @@
 .closing-list {
   position: absolute;
   top: 190px;
-  left: 160px;
-  right: 160px;
+  left: 110px;
+  right: 110px;
   margin: 0;
   padding-left: 40px;
-  font-size: 40px;
+  font-size: 44px;
   line-height: 1.3;
 }
 
