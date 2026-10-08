@@ -62,13 +62,13 @@
 
 .horizon-modes-tiles {
   position: absolute;
-  top: 122px;
+  top: 116px;
   left: 30px;
   width: 1860px;
   display: grid;
   grid-template-columns: 920px 920px;
-  grid-template-rows: 300px 300px 300px;
-  gap: 10px 20px;
+  grid-template-rows: 288px 288px 288px;
+  gap: 6px 20px;
 }
 
 .horizon-modes-tile {
@@ -129,6 +129,13 @@
 
 .horizon-modes-tile .horizon-modes-weller {
   left: 18px;
+  top: 238px;
+  visibility: hidden;
+}
+
+/* "Kerr, unfiltered" for Weller+, to the right of their credit (user, 2026-10-08). */
+.horizon-modes-tile .horizon-modes-wfilt {
+  left: 430px;
   top: 244px;
   visibility: hidden;
 }
@@ -138,12 +145,23 @@
 }
 
 .horizon-modes-tile.horizon-modes-v2 .horizon-modes-weller,
+.horizon-modes-tile.horizon-modes-v2 .horizon-modes-wfilt,
 .horizon-modes-tile.horizon-modes-v2 .horizon-modes-sun2 {
   visibility: visible;
 }
 
 .horizon-modes-tile.horizon-modes-v2 .horizon-modes-sun1 {
   visibility: hidden;
+}
+
+/* "See also" credits under the tiles, shown from arrival (user, 2026-10-08). */
+.horizon-modes-also {
+  position: absolute;
+  left: 30px;
+  width: 1860px;
+  top: 1000px;
+  text-align: center;
+  font-size: 40px;
 }
 
 /* Zimmerman+ tile: three equation lines, slightly smaller so they clear the plot. */
