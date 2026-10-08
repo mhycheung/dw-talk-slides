@@ -225,7 +225,7 @@
   var SUB = 5;                    // stages per time: arrow, dashed QNM, two equations, point
   var KZERO = TIMES.length * SUB + 1;        // stage: the filtered waveform is 0 for t >= 0
   var KFLIP = KZERO + NEG.length * SUB + 1;  // stage: the flipped ringdown for t < 0
-  var CFG_N17 = { t0: -8, t1: 8, lmin: -3, zero: true, centre: false, tick: 1, tlab: 4, xlabel: "t" };
+  var CFG_N17 = { t0: -8, t1: 8, lmin: -3, zero: true, centre: true, tick: 1, tlab: 4, xlabel: "t" };
 
   function draw(slide, k) {
     var svg = base(slide, CFG_N17);
@@ -267,11 +267,6 @@
     }
 
     arrow(slide, svg, sub >= 1 ? ts : null);
-
-    slide.querySelector(".td-filter-psi").classList.toggle("td-filter-on", !neg && sub >= 3);
-    slide.querySelector(".td-filter-mis").classList.toggle("td-filter-on", !neg && sub >= 4);
-    slide.querySelector(".td-filter-zero").classList.toggle("td-filter-on", neg && sub >= 3);
-    slide.querySelector(".td-filter-proj").classList.toggle("td-filter-on", neg && sub >= 4);
   }
 
   Deck.widget("td-filter-n17", {
@@ -319,7 +314,7 @@
   // light-ring crossing, both waveforms divided by max |Psi| in the window.
   // Per time: arrow, dashed Psi(t_k) Q_220, point at |hat Psi(t_k)|; then the whole
   // filtered waveform.
-  var PT = [-40, -20, 0, 20, 40];
+  var PT = [40, 20, 0, -20, -40];  // visited from late to early
   var PSUB = 3, PLAST = PT.length * PSUB + 1;
   var CFG_PL = { t0: -80, t1: 60, lmin: -4, zero: false, centre: true, tick: 10, tlab: 20, xlabel: "t/M",
                  labelOut: true };   // the waveform fills the top right of the panels

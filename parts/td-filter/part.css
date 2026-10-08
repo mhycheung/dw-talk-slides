@@ -7,6 +7,13 @@
   font-size: 50px;
 }
 
+.td-filter-eq .katex-display { margin: 0; }
+
+.td-filter-eqtext {
+  font-size: 40px;
+  margin-top: 6px;
+}
+
 .td-filter-plot {
   position: absolute;
   top: 0;
@@ -32,18 +39,6 @@
   font-size: 40px;
   white-space: nowrap;
 }
-
-.td-filter-side {
-  position: absolute;
-  top: 290px;
-  left: 1300px;
-  width: 600px;
-  text-align: center;
-  font-size: 42px;
-}
-
-.td-filter-side > div { visibility: hidden; }
-.td-filter-side > div.td-filter-on { visibility: visible; }
 
 .bg-filter-lufit {
   position: absolute;
