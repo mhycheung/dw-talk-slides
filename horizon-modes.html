@@ -33,14 +33,44 @@
 
 <section class="slide" id="horizon-modes-screened">
   <h1 class="title">Horizon modes are screened</h1>
-  <ul class="horizon-modes-list">
-    <li data-step="1"><span class="cite">Zimmerman+ (1106.0782)</span>: $\omega_H^{(1)}$ and $\omega_H^{(2)}$ screened by a factor in front of the source term, to leading order in $\epsilon$, but $\omega\to\omega_H^{(2)}$ at next order</li>
-    <li data-step="2"><span class="cite">Oshita+ (2509.09165)</span>, stationary phase approximation (SPA): $\omega_H^{(n\ge3)}$ are also screened by a factor in front of $G(r)$, but $\omega\to\omega_H^{(2)}$</li>
-    <li data-step="3"><span class="cite">Kuntz+ (2606.07173)</span>: SPA is problematic; in Schwarzschild all $\omega_H^{(n)}$ have zero amplitude, by causality</li>
-    <li data-step="4"><span class="cite">Ma+ (2607.06677)</span>: no SPA, avoids the problem in Kuntz+; the $\omega_H^{(1)}$ pieces cancel in the sum over filter poles, but $\omega\approx\omega_G$</li>
-    <li data-step="5"><span class="cite">Kubota+ (2609.07326)</span>: SPA is problematic; all $\omega_H^{(n)}$ screened by the prefactors in front of $G(r)$ and $S(r)$, so none survives</li>
-    <li data-step="6"><span class="cite">Sun+ (2608.23209)</span>: all $\omega_H^{(n)}$ screened, but the instantaneous $\omega\to\omega_H^{(3)}$</li>
-  </ul>
+  <div class="horizon-modes-tiles">
+    <div class="horizon-modes-tile" data-step="1" data-tile="0">
+      <div class="horizon-modes-filt">unfiltered</div>
+      <span class="cite">Zimmerman+ (1106.0782)</span>
+      <div class="horizon-modes-teq">$$\psi_4\sim\int\! d\omega\,e^{-i\omega u}\,\frac{\tilde Z(\omega)}{\omega-\omega_H^{(1)}}$$$$\tilde Z\propto(\omega-\omega_H^{(1)})(\omega-\omega_H^{(2)})+\mathcal O(\epsilon)$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+    <div class="horizon-modes-tile" data-step="2" data-tile="1">
+      <div class="horizon-modes-filt">filtered(?)</div>
+      <span class="cite">Oshita+ (2509.09165)</span>
+      <div class="horizon-modes-teq">$$\psi_4\sim\hat D(\omega_G)\,e^{-i\int^u\omega_G\,du'}$$$$\hat D(\omega)=\frac{(\omega-\omega_H^{(1)})(\omega-\omega_H^{(2)})}{2i\omega B^{\rm in}(\omega)}$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+    <div class="horizon-modes-tile" data-step="3" data-tile="2">
+      <div class="horizon-modes-filt">unfiltered</div>
+      <span class="cite">Kuntz+ (2606.07173)</span>
+      <div class="horizon-modes-teq">$$\int\! d\omega\,e^{-i\omega u}\,G(\omega)$$$$\times\int^{\tilde t(u)}\!\! dt\,S(t)\,e^{i\omega t}=0$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+    <div class="horizon-modes-tile" data-step="4" data-tile="3">
+      <div class="horizon-modes-filt">filtered</div>
+      <span class="cite">Ma+ (2607.06677)</span>
+      <div class="horizon-modes-teq">$$\Psi_{\rm DW}=\sum_n E_n e^{-i\bar\omega_n u}\!\int_{r_+}^{R_{\rm min}(u)}\!\!(\dots)$$$$\approx e^{-i\int^u\omega_G\,du'}$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+    <div class="horizon-modes-tile" data-step="5" data-tile="4">
+      <div class="horizon-modes-filt">unfiltered</div>
+      <span class="cite">Kubota+ (2609.07326)</span>
+      <div class="horizon-modes-teq">$$h\sim\int\! d\omega\,e^{-i\omega u}\,\Pi(\omega)\!\int\! dt'\,e^{iP(\omega,t')}$$$$\Pi\propto\frac{(\omega-\omega_H^{(1)})(\omega-\omega_H^{(2)})}{B^{\rm inc}(\omega)}$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+    <div class="horizon-modes-tile" data-step="6" data-tile="5">
+      <div class="horizon-modes-filt">filtered</div>
+      <span class="cite">Sun+ (2608.23209)</span>
+      <div class="horizon-modes-teq">$$\Psi_{\rm DW}\sim\int\! d\omega\,e^{-i\omega u}\,\mathcal F(\omega)\,\frac{\tilde{\mathcal I}(\omega)}{i\omega B^{\rm in}(\omega)}$$$$\omega_{\rm DW}(u)\to\omega_H^{(3)}$$</div>
+      <svg class="horizon-modes-tplot" width="300" height="290" viewBox="0 0 300 290"></svg>
+    </div>
+  </div>
 </section>
 </div>
 <script src="vendor/katex/katex.min.js"></script>

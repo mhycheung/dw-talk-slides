@@ -60,21 +60,58 @@
   font-size: 40px;
 }
 
-.horizon-modes-list {
+.horizon-modes-tiles {
   position: absolute;
-  top: 135px;
-  left: 80px;
-  width: 1760px;
-  margin: 0;
-  padding-left: 40px;
-  font-size: 40px;
-  line-height: 1.22;
+  top: 122px;
+  left: 30px;
+  width: 1860px;
+  display: grid;
+  grid-template-columns: 920px 920px;
+  grid-template-rows: 300px 300px 300px;
+  gap: 10px 20px;
 }
 
-.horizon-modes-list li {
-  margin-bottom: 16px;
+.horizon-modes-tile {
+  position: relative;
+  border: 2px solid #ccc;
+  border-radius: 6px;
 }
 
-.horizon-modes-list .cite {
+.horizon-modes-tile .cite {
+  position: absolute;
+  left: 18px;
+  top: 6px;
   font-size: 40px;
+}
+
+.horizon-modes-teq {
+  position: absolute;
+  left: 18px;
+  top: 64px;
+  width: 590px;
+  font-size: 28px;
+}
+
+.horizon-modes-teq .katex-display {
+  margin: 0 0 10px;
+  text-align: left;
+}
+
+.horizon-modes-tplot {
+  position: absolute;
+  right: 6px;
+  top: 4px;
+}
+
+.horizon-modes-tlab {
+  font-family: "KaTeX_Main", "Times New Roman", serif;
+  font-style: italic;
+}
+
+/* Filtered or unfiltered waveform, top right of each tile (user, 2026-10-08). */
+.horizon-modes-filt {
+  position: absolute;
+  right: 16px;
+  top: 8px;
+  font-size: 34px;
 }

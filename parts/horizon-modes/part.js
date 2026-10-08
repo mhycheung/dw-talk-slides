@@ -219,3 +219,95 @@
     }
   });
 })();
+
+// horizon-modes-screened: six tiles, one per key press (data-step in part.html), one per paper.
+// Each tile: credit, schematic equation, and a schematic plot of -Im(omega) against Re(omega)
+// with omega_H^(1..4) (on the imaginary axis for the Schwarzschild papers), red crosses on the
+// modes the paper finds screened, a ring on the mode that survives, and a purple track for the
+// instantaneous frequency and the mode it approaches. Positions are schematic, not to scale.
+(function () {
+  "use strict";
+
+  var TILES = [                      // record: tasks/t05-horizon-modes/context.md, subcontext/lit_*.md
+    { schw: false, cross: [1], ring: [2], track: 0 },        // Zimmerman+: omega_H^(2) at next order
+    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 2 }, // Oshita+: hat D(omega_G) e^{-i int omega_G}
+    { schw: true, cross: [1, 2, 3, 4], ring: [], track: 0 },  // Kuntz+: all vanish, Schwarzschild
+    { schw: true, cross: [1], ring: [], track: 1 },           // Ma+: e^{-kappa u} pieces cancel; omega ~ omega_G
+    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 0 }, // Kubota+: all cancel
+    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 3 }  // Sun+: omega_DW -> omega_H^(3)
+  ];
+  var NS = "http://www.w3.org/2000/svg";
+  var X0 = 42, X1 = 292, Y0 = 252, Y1 = 14;   // plot frame in the 300 x 290 svg
+  var RE_H = 0.42, DK = 0.205;                // schematic m Omega_H and kappa, in plot units
+  var PURPLE = "#540d6e", RED = "#d00000";
+  var SVG_L = 610, SVG_T = 4;                 // svg position in the tile: 916 - 6 (right) - 300; top 4
+  var built = false;
+
+  function X(re) { return X0 + re * (X1 - X0); }
+  function Y(mi) { return Y0 - mi * (Y0 - Y1); }
+  function el(parent, name, at) {
+    var n = document.createElementNS(NS, name);
+    for (var k in at) n.setAttribute(k, at[k]);
+    parent.appendChild(n);
+    return n;
+  }
+  function lab(tile, svg, tex, x, y, tf) {   // KaTeX label at svg coordinates (x, y)
+    var d = document.createElement("div");
+    d.style.position = "absolute";
+    d.style.left = (SVG_L + x) + "px";      // fixed offsets: the tiles are hidden when this runs
+    d.style.top = (SVG_T + y) + "px";
+    d.style.fontSize = "24px";
+    d.style.whiteSpace = "nowrap";
+    d.style.transform = tf || "translate(0, -50%)";
+    katex.render(tex, d);
+    tile.appendChild(d);
+  }
+
+  function build(slide) {
+    if (built) return;
+    built = true;
+    var tiles = slide.querySelectorAll(".horizon-modes-tile");
+    for (var i = 0; i < tiles.length; i++) {
+      var T = TILES[i], tile = tiles[i], svg = tile.querySelector(".horizon-modes-tplot");
+      var defs = el(svg, "defs", {});
+      var mk = el(defs, "marker", { id: "horizon-modes-tarrow-" + i, viewBox: "0 0 10 10", refX: 8, refY: 5,
+                                    markerWidth: 5, markerHeight: 5, orient: "auto" });
+      el(mk, "path", { d: "M0,0 L10,5 L0,10 z", fill: PURPLE });
+      var ax = el(defs, "marker", { id: "horizon-modes-taxis-" + i, viewBox: "0 0 10 10", refX: 9, refY: 5,
+                                    markerWidth: 6, markerHeight: 6, orient: "auto" });
+      el(ax, "path", { d: "M0,0 L10,5 L0,10 z", fill: "#000" });
+      var axm = "url(#horizon-modes-taxis-" + i + ")";
+      el(svg, "line", { x1: X0, y1: Y0, x2: X1, y2: Y0, stroke: "#000", "stroke-width": 2.5, "marker-end": axm });
+      el(svg, "line", { x1: X0, y1: Y0, x2: X0, y2: Y1, stroke: "#000", "stroke-width": 2.5, "marker-end": axm });
+      lab(tile, svg, "\\mathrm{Re}\\,\\omega", X1 - 4, Y0 + 4, "translate(-100%, 0)");
+      lab(tile, svg, "-\\mathrm{Im}\\,\\omega", X0 - 10, (Y0 + Y1) / 2, "translate(-50%, -50%) rotate(-90deg) translate(0, -60%)");
+      var re = T.schw ? 0 : RE_H;
+      if (T.track) {                 // from the right, low damping, curving onto omega_H^(track)
+        var tx = X(re), ty = Y(T.track * DK), sx = X(0.98), sy = Y(0.04);
+        var cx = X(re + 0.08), cy = sy;
+        var L = Math.hypot(tx - cx, ty - cy), ex = tx + (cx - tx) * 15 / L, ey = ty + (cy - ty) * 15 / L;
+        el(svg, "path", { d: "M" + sx + "," + sy + " Q" + cx + "," + cy + " " + ex + "," + ey,
+                          fill: "none", stroke: PURPLE, "stroke-width": 4,
+                          "marker-end": "url(#horizon-modes-tarrow-" + i + ")" });
+      }
+      for (var n = 1; n <= 4; n++) {
+        var px = X(re), py = Y(n * DK);
+        el(svg, "circle", { cx: px, cy: py, r: 7, fill: "#000" });
+        if (T.ring.indexOf(n) >= 0)
+          el(svg, "circle", { cx: px, cy: py, r: 15, fill: "none", stroke: PURPLE, "stroke-width": 4 });
+        if (T.cross.indexOf(n) >= 0) {
+          var c = 13;
+          el(svg, "path", { d: "M" + (px - c) + "," + (py - c) + " L" + (px + c) + "," + (py + c) +
+                               " M" + (px - c) + "," + (py + c) + " L" + (px + c) + "," + (py - c),
+                            stroke: RED, "stroke-width": 4.5, "stroke-linecap": "round" });
+        }
+        if (T.schw) lab(tile, svg, "\\omega_H^{(" + n + ")}", px + 20, py);
+        else lab(tile, svg, "\\omega_H^{(" + n + ")}", px - 20, py, "translate(-100%, -50%)");  // left: clear of the track
+      }
+    }
+  }
+
+  Deck.widget("horizon-modes-screened", {
+    enter: function (slide) { build(slide); }
+  });
+})();
