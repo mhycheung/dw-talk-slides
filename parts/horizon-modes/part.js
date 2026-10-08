@@ -220,7 +220,8 @@
   });
 })();
 
-// horizon-modes-screened: six tiles, one per key press (data-step in part.html), one per paper.
+// horizon-modes-screened: six tiles, one per key press (data-step in part.html), one per paper;
+// a seventh key press updates the Sun+ tile (see the widget below).
 // Each tile: credit, schematic equation, and a schematic plot of -Im(omega) against Re(omega)
 // with omega_H^(1..4) (on the imaginary axis for the Schwarzschild papers), red crosses on the
 // modes the paper finds screened, a ring on the mode that survives, and a purple track for the
@@ -229,12 +230,12 @@
   "use strict";
 
   var TILES = [                      // record: tasks/t05-horizon-modes/context.md, subcontext/lit_*.md
-    { schw: false, cross: [1], ring: [2], track: 0 },        // Zimmerman+: omega_H^(2) at next order
+    { schw: false, cross: [1], ring: [2], track: 0 },         // Zimmerman+: omega_H^(2) at next order
     { schw: false, cross: [1, 2, 3, 4], ring: [], track: 1 }, // Oshita+: omega_G -> omega_H^(1) (their l.204)
     { schw: true, cross: [1, 2, 3, 4], ring: [], track: 0 },  // Kuntz+: all vanish, Schwarzschild
     { schw: true, cross: [1], ring: [], track: 1 },           // Ma+: e^{-kappa u} pieces cancel; omega ~ omega_G
-    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 0 }, // Kubota+: all cancel
-    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 3 }  // Sun+: omega_DW -> omega_H^(3)
+    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 2, track2: 3 }, // Sun+: v1 omega_DW -> omega_H^(2); last stage: -> omega_H^(3) (v2, Weller+)
+    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 0 }  // Kubota+: all cancel
   ];
   var NS = "http://www.w3.org/2000/svg";
   var X0 = 42, X1 = 292, Y0 = 252, Y1 = 14;   // plot frame in the 300 x 290 svg
@@ -282,12 +283,14 @@
       lab(tile, svg, "\\mathrm{Re}\\,\\omega", X1 - 4, Y0 + 4, "translate(-100%, 0)");
       lab(tile, svg, "-\\mathrm{Im}\\,\\omega", X0 - 10, (Y0 + Y1) / 2, "translate(-50%, -50%) rotate(-90deg) translate(0, -60%)");
       var re = T.schw ? 0 : RE_H;
-      if (T.track) {                 // from the right, low damping, curving onto omega_H^(track)
-        var tx = X(re), ty = Y(T.track * DK), sx = X(0.98), sy = Y(0.04);
+      var targets = T.track2 ? [T.track, T.track2] : (T.track ? [T.track] : []);
+      for (var q = 0; q < targets.length; q++) {   // from the right, low damping, curving onto omega_H^(target)
+        var tx = X(re), ty = Y(targets[q] * DK), sx = X(0.98), sy = Y(0.04);
         var cx = X(re + 0.08), cy = sy;
         var L = Math.hypot(tx - cx, ty - cy), ex = tx + (cx - tx) * 15 / L, ey = ty + (cy - ty) * 15 / L;
         el(svg, "path", { d: "M" + sx + "," + sy + " Q" + cx + "," + cy + " " + ex + "," + ey,
                           fill: "none", stroke: PURPLE, "stroke-width": 4,
+                          "class": "horizon-modes-track" + (q + 1),
                           "marker-end": "url(#horizon-modes-tarrow-" + i + ")" });
       }
       for (var n = 1; n <= 4; n++) {
@@ -307,7 +310,19 @@
     }
   }
 
+  // Stage 7: in the Sun+ tile the omega_H^(2) arrow turns dashed and faint, an arrow to omega_H^(3)
+  // appears, the equation line changes to omega_H^(3), and the Weller+ credit appears.
   Deck.widget("horizon-modes-screened", {
-    enter: function (slide) { build(slide); }
+    steps: 7,
+    enter: function (slide) { build(slide); },
+    step: function (slide, k) {
+      build(slide);
+      var tile = slide.querySelector('.horizon-modes-tile[data-tile="4"]'), v2 = k >= 7;
+      tile.classList.toggle("horizon-modes-v2", v2);
+      var t1 = tile.querySelector(".horizon-modes-track1"), t2 = tile.querySelector(".horizon-modes-track2");
+      t1.setAttribute("stroke-dasharray", v2 ? "9 7" : "none");
+      t1.setAttribute("opacity", v2 ? 0.35 : 1);
+      t2.style.visibility = v2 ? "" : "hidden";
+    }
   });
 })();

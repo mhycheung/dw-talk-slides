@@ -115,3 +115,33 @@
   top: 56px;
   font-size: 32px;
 }
+
+/* Sun+ tile: the omega_DW line, omega_H^(2) until the last stage, then omega_H^(3) with the
+   Weller credit below it. */
+.horizon-modes-sunline {
+  position: absolute;
+  left: 18px;
+  top: 192px;
+  width: 590px;
+  text-align: center;
+  font-size: 28px;
+}
+
+.horizon-modes-tile .horizon-modes-weller {
+  left: 18px;
+  top: 244px;
+  visibility: hidden;
+}
+
+.horizon-modes-sun2 {
+  visibility: hidden;
+}
+
+.horizon-modes-tile.horizon-modes-v2 .horizon-modes-weller,
+.horizon-modes-tile.horizon-modes-v2 .horizon-modes-sun2 {
+  visibility: visible;
+}
+
+.horizon-modes-tile.horizon-modes-v2 .horizon-modes-sun1 {
+  visibility: hidden;
+}
