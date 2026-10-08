@@ -147,3 +147,12 @@
 }
 
 .td-filter-points li { margin-bottom: 30px; }
+
+/* source line at the bottom of the two derivation slides */
+.td-filter-see {
+  position: absolute;
+  top: 985px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
