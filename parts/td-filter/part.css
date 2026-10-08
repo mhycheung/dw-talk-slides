@@ -97,3 +97,23 @@
   font-size: 40px;
   margin-top: 30px;
 }
+
+.td-filter-ov {
+  position: absolute;
+  top: 130px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 50px;
+}
+
+.td-filter-ov > div { margin-bottom: 70px; }
+
+.td-filter-ovtext {
+  position: absolute;
+  top: 860px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 44px;
+}
