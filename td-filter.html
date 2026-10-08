@@ -47,6 +47,7 @@
   <div class="td-filter-label td-filter-label-top">original</div>
   <div class="td-filter-label td-filter-label-bot">filtered</div>
   <div class="td-filter-tlabel"></div>
+  <div class="td-filter-unit" data-step="21">$$|\mathcal{F}(\omega)| = \left|\frac{\omega - \omega_{220}}{\omega - \omega_{220}^*}\right| = 1$$</div>
 </section>
 
 <section class="slide" id="td-filter-diff">
@@ -59,6 +60,21 @@
   <div class="td-filter-label td-filter-label-top">original</div>
   <div class="td-filter-label td-filter-label-bot">filtered</div>
   <div class="td-filter-tlabel"></div>
+</section>
+
+<section class="slide" id="td-filter-flip">
+  <div class="td-filter-mini">
+    <svg class="td-filter-plot" data-clip="td-filter-flip-clip-" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+    <div class="td-filter-axes"></div>
+    <div class="td-filter-label td-filter-label-top">original</div>
+    <div class="td-filter-label td-filter-label-bot">filtered</div>
+    <div class="td-filter-tlabel"></div>
+  </div>
+  <ul class="td-filter-points">
+    <li data-step="1">The filter redistributes power in time, $|\mathcal{F}(\omega)| = 1$.</li>
+    <li data-step="2">If the waveform is a clean QNM at times $\tau > t$, the filter removes it cleanly and deposits the power to earlier times.</li>
+    <li data-step="3">The filter does not affect the shape of other QNMs.</li>
+  </ul>
 </section>
 
 <section class="slide" id="td-filter-plunge">

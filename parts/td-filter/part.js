@@ -277,6 +277,12 @@
     step: function (slide, k) { draw(slide, k); }
   });
 
+  // ---------------------------------------------------------------- td-filter-flip
+  // The end state of td-filter-n17 (the flipped ringdown), drawn small above the bullets.
+  Deck.widget("td-filter-flip", {
+    step: function (slide) { draw(slide, KFLIP); }
+  });
+
   // ---------------------------------------------------------------- td-filter-diff
   // Waveform 330, filter 220. Per time: arrow, dashed Psi(t_k) Q_220, point at
   // |F(omega_330) Psi(t_k)|; then the whole filtered waveform for t >= 0.
