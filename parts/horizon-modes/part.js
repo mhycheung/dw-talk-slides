@@ -1,5 +1,5 @@
 // horizon-modes-main: left, the chi = 0.7 plunge of Cheung (2608.29466) in Boyer-Lindquist
-// coordinates, played in coordinate time t (faster far out, slower near the horizon), one
+// coordinates, played in coordinate time t at a constant rate, one
 // colour, with a fading tail. After the recorded worldline ends (r = r_+ (1 + 1e-6)) the
 // particle stays on r = r_+ and rotates at Omega_H, for as long as the slide is shown.
 // Stage 1: the particle fades (exponentially, over several orbits), reappears abruptly on the
@@ -12,13 +12,12 @@
 
   var D = horizon_modes_traj;        // tasks/t05-horizon-modes/S1/make_traj.py; M = 1
   var COL = "84,13,110";             // #540d6e, as in the SBU plunge slide
-  // Coordinate time per second of animation, M/s: R_FAR far out, R_NEAR near the horizon,
-  // switched smoothly around t = T_SW (the light-ring crossing is at t = 172.5 M), so that
-  // the plunge is quick but the horizon orbit (period 2 pi/(Omega_H R_NEAR) = 2.05 s) is slow.
-  var R_FAR = 40, R_NEAR = 15, T_SW = 170, W_SW = 8;
-  var T_TAIL = 1.8;                  // s, a tail point fades to nothing over this time (< 1 horizon orbit)
+  // Coordinate time per second of animation, M/s, the same throughout, so that the angular
+  // speed on screen is d phi/dt (horizon orbit period 2 pi/(Omega_H RATE) = 0.77 s).
+  var RATE = 40;
+  var T_TAIL = 0.7;                  // s, a tail point fades to nothing over this time (< 1 horizon orbit)
   var TAU_FADE = 2.5;                // s, e-folding time of the particle's fade (stage >= 1)
-  var T_FADE = 9.0;                  // s, the particle is cut off after this long (about 4 orbits) ...
+  var T_FADE = 9.0;                  // s, the particle is cut off after this long (about 12 orbits) ...
   var T_GAP = 0.5;                   // s, ... stays invisible this long, then reappears
   var L = 3.9;                       // half-width of the view, in M
   var LW = 5.5;                      // tail width, px of the 860 px canvas
@@ -59,7 +58,7 @@
     var n = Math.ceil(dt / 0.004);      // sub-steps keep the tail smooth
     for (var j = 0; j < n; j++) {
       var h = dt / n;
-      t += (R_NEAR + (R_FAR - R_NEAR) / (1 + Math.exp((t - T_SW) / W_SW))) * h;
+      t += RATE * h;
       if (fading) {
         fadeAge += h;
         if (fadeAge >= T_FADE + T_GAP) fadeAge = 0;   // reappear on the horizon
