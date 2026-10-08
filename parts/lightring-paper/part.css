@@ -45,8 +45,8 @@
 /* Network SNR of the part sourced within the light ring, 2608.29466 p. 3 (rho ~ 0.7). */
 .lightring-paper-snr {
   position: absolute;
-  left: 930px;
-  width: 950px;
+  left: 900px;
+  width: 990px;
   top: 110px;
   text-align: center;
   font-size: 40px;

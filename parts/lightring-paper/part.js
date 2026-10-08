@@ -1,8 +1,8 @@
 // lightring-paper-plunge: left, a particle plunging into a Kerr black hole (chi = 0.7), the
 // trajectory of Cheung (2608.29466), purple outside the prograde light ring and red inside
 // it, as in the paper's figure (stage 0, plays on arrival). Stage 1: the paper's unfiltered
-// waveform panel fades in on the right. Stage 2: a red line, the SNR of GW250114 from within
-// the light ring, above the panel (part.html, data-step="2"). Going back draws the finished plunge at once.
+// waveform figure (both panels, original and filtered) fades in on the right. Stage 2: a red line, the SNR of GW250114 from within
+// the light ring, above the figure (part.html, data-step="2"). Going back draws the finished plunge at once.
 // Outside the light ring the particle moves uniformly in coordinate time; inside, uniformly
 // in arc length with an ease-out (coordinate time diverges at the horizon).
 (function () {
