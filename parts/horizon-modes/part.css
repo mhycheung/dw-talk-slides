@@ -19,26 +19,26 @@
 
 .horizon-modes-eq {
   position: absolute;
-  top: 118px;
+  top: 150px;
   left: 950px;
   width: 940px;
   font-size: 34px;
 }
 
-.horizon-modes-int {
-  white-space: nowrap;
-  margin-bottom: 6px;
+.horizon-modes-right .horizon-modes-nobr .horizon-modes-br {
+  display: none;
 }
 
 .horizon-modes-sum,
 .horizon-modes-def {
   white-space: nowrap;
-  margin-left: 20px;
-}
-
-.horizon-modes-def {
   margin-top: 6px;
 }
+
+.horizon-modes-sum {
+  margin-left: 30px;
+}
+
 
 .horizon-modes-right .horizon-modes-hid {
   visibility: hidden;

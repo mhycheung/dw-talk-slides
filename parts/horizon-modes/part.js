@@ -4,7 +4,7 @@
 // particle stays on r = r_+ and rotates at Omega_H, for as long as the slide is shown.
 // Stage 1: the particle fades (exponentially, over several orbits), reappears abruptly on the
 // horizon at full brightness, and fades again, indefinitely. Right: the schematic equation with
-// its first term c_1 eps, and the plot of -Im(M omega) against Re(M omega) with omega_H^(1).
+// its first term c_1 eps (no brackets until the second term), and the plot of -Im(M omega) against Re(M omega) with omega_H^(1).
 // Stage 2: the terms c_n eps^n and the modes omega_H^(n) = m Omega_H - i n kappa, n = 2..5,
 // then "+ ..." and a vertical ellipsis, appear one pair at a time without further key presses.
 (function () {
@@ -184,6 +184,7 @@
 
   function upto(slide, n) {          // show terms and modes 1..n (n = NMODE + 1: the ellipses)
     shown = n;
+    slide.querySelector(".horizon-modes-sum").classList.toggle("horizon-modes-nobr", n < 2);
     var els = slide.querySelectorAll(".horizon-modes-term");
     for (var i = 0; i < els.length; i++)
       els[i].classList.toggle("horizon-modes-hid", Number(els[i].getAttribute("data-n")) > n);
