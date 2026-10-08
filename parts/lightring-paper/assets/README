@@ -1,0 +1,5 @@
+Assets of the lightring-paper part (task t06-lightring-paper).
+
+- lightring-paper-traj.js, dw_original_panel.png: copied from the direct-wave part of the
+  seminar_SBU project (its task t11-direct-wave, script S1/make_dw_data.py), made from the
+  data of Cheung (2608.29466). The JS variable was renamed to lightring_paper_traj.
