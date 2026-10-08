@@ -222,7 +222,7 @@
   // ---------------------------------------------------------------- td-filter-n17
   var TIMES = [0, 1, 2];          // times visited one after another, t >= 0
   var NEG = [-1, -2, -3];         // then these, t < 0
-  var SUB = 5;                    // stages per time: arrow, dashed QNM, two equations, point
+  var SUB = 3;                    // stages per time: arrow, dashed QNM, point
   var KZERO = TIMES.length * SUB + 1;        // stage: the filtered waveform is 0 for t >= 0
   var KFLIP = KZERO + NEG.length * SUB + 1;  // stage: the flipped ringdown for t < 0
   var CFG_N17 = { t0: -8, t1: 8, lmin: -3, zero: true, centre: true, tick: 1, tlab: 4, xlabel: "t" };
