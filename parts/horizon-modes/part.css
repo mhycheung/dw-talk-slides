@@ -49,3 +49,13 @@
   white-space: nowrap;
   transform: translateY(-50%);
 }
+
+/* Credit for the horizon modes, centred below the frequency plot (user, 2026-10-08). */
+.horizon-modes-cite {
+  position: absolute;
+  left: 1100px;
+  width: 730px;
+  top: 988px;
+  text-align: center;
+  font-size: 40px;
+}

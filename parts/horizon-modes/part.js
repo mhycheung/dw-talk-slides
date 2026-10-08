@@ -116,7 +116,7 @@
   // ---------------------------------------------------------------- the frequency plot
   var NMODE = 5, T_ADD = 0.7;        // modes shown; s between successive terms at stage 2
   var COLS = ["#ee4266", "#ff8c00", "#2a9d8f", "#3a86ff", "#8338ec"];
-  var PX0 = 1100, PX1 = 1830, PY0 = 915, PY1 = 430;   // frame: left, right, bottom, top (px)
+  var PX0 = 1100, PX1 = 1830, PY0 = 865, PY1 = 400;   // frame: left, right, bottom, top (px)
   var XR = [0, 1.0], YR = [0, 1.4];  // Re(M omega), -Im(M omega)
   var NS = "http://www.w3.org/2000/svg";
   var built = false, shown = 0, timers = [];
@@ -167,7 +167,7 @@
       el(svg, "line", { x1: PX1, y1: PY(y), x2: PX1 - L, y2: PY(y), stroke: ln.stroke, "stroke-width": ln["stroke-width"] });
       if (maj) lab(box, y.toFixed(1), PX0 - 12, PY(y), { fs: 32, tf: "translate(-100%, -50%)" });
     }
-    lab(box, "\\mathrm{Re}(M\\omega)", (PX0 + PX1) / 2, PY0 + 66, { fs: 36, tf: "translate(-50%, 0)" });
+    lab(box, "\\mathrm{Re}(M\\omega)", (PX0 + PX1) / 2, PY0 + 68, { fs: 36, tf: "translate(-50%, 0)" });
     lab(box, "-\\mathrm{Im}(M\\omega)", PX0 - 95, (PY0 + PY1) / 2, { fs: 36, tf: "translate(-50%, -50%) rotate(-90deg)" });
     lab(box, "\\chi = " + D.chi + ",\\ m = " + D.m, PX1 - 24, PY1 + 40, { fs: 32, tf: "translate(-100%, -50%)" });
     for (var n = 1; n <= NMODE; n++) {
