@@ -1,0 +1,14 @@
+.closing-list {
+  position: absolute;
+  top: 190px;
+  left: 160px;
+  right: 160px;
+  margin: 0;
+  padding-left: 40px;
+  font-size: 40px;
+  line-height: 1.3;
+}
+
+.closing-list li {
+  margin-bottom: 36px;
+}
