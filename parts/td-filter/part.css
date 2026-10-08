@@ -156,3 +156,13 @@
   right: 0;
   text-align: center;
 }
+
+/* td-filter-plunge, last step: one line in the gap between the panels */
+.td-filter-nonqnm {
+  position: absolute;
+  top: 562px;
+  left: 1042px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 40px;
+}
