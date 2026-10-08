@@ -1,8 +1,8 @@
-// lightring-paper-plunge: left, a particle plunging into a Kerr black hole (chi = 0.7), the
+// lightring-paper-plunge: a particle plunging into a Kerr black hole (chi = 0.7), the
 // trajectory of Cheung (2608.29466), purple outside the prograde light ring and red inside
-// it, as in the paper's figure (stage 0, plays on arrival). Stage 1: the paper's unfiltered
-// waveform figure (both panels, original and filtered) fades in on the right. Stage 2: a red line, the SNR of GW250114 from within
-// the light ring, above the figure (part.html, data-step="2"). Going back draws the finished plunge at once.
+// it, as in the paper's figure; plays on arrival, centred, no steps. Arriving backwards draws
+// the finished plunge at once. (The waveform figure and the SNR line are the next slide,
+// lightring-paper-waveform, part.html only.)
 // Outside the light ring the particle moves uniformly in coordinate time; inside, uniformly
 // in arc length with an ease-out (coordinate time diverges at the horizon).
 (function () {
@@ -93,10 +93,6 @@
     raf = null;
   }
 
-  function panel(slide, on) {
-    slide.querySelector(".lightring-paper-panel").classList.toggle("lightring-paper-show", on);
-  }
-
   function play(slide) {
     stop();
     t0 = performance.now();
@@ -109,13 +105,12 @@
   }
 
   Deck.widget("lightring-paper-plunge", {
-    steps: 2,
+    steps: 0,
     enter: function () {},
-    leave: function (slide) { stop(); panel(slide, false); },
+    leave: function (slide) { stop(); },
     step: function (slide, k, dir) {
-      panel(slide, k >= 1);
-      if (k === 0 && dir !== -1) play(slide);
-      else if (!raf) draw(slide, 2);   // stage 1 lets a running plunge finish
+      if (dir !== -1) play(slide);
+      else draw(slide, 2);             // arriving backwards: the finished plunge
     }
   });
 })();

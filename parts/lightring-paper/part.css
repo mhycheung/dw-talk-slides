@@ -1,34 +1,9 @@
-.lightring-paper-fig {
-  position: absolute;
-  top: 160px;
-  width: 880px;
-  margin: 0;
-  text-align: center;
-}
-
-.lightring-paper-fig img {
-  display: block;
-  height: 800px;
-  margin: 0 auto;
-}
-
-/* Citations at body-text size (user, 2026-09-28). */
-.lightring-paper-fig .cite {
-  font-size: 40px;
-}
-
 .lightring-paper-canvas {
   position: absolute;
 }
 
-.lightring-paper-panel {
+.lightring-paper-fig {
   position: absolute;
-  opacity: 0;
-}
-
-.lightring-paper-panel.lightring-paper-show {
-  opacity: 1;
-  transition: opacity 0.8s ease;
 }
 
 /* Credit for the paper whose data the whole slide shows (single author: no "+"),
@@ -45,9 +20,9 @@
 /* Network SNR of the part sourced within the light ring, 2608.29466 p. 3 (rho ~ 0.7). */
 .lightring-paper-snr {
   position: absolute;
-  left: 900px;
-  width: 990px;
-  top: 110px;
+  left: 0;
+  right: 0;
+  top: 105px;
   text-align: center;
   font-size: 40px;
   color: #d00000;
