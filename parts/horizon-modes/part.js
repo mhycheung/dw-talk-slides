@@ -309,11 +309,13 @@
       lab(tile, svg, "-\\mathrm{Im}\\,\\omega", X0 - 10, (Y0 + Y1) / 2, "translate(-50%, -50%) rotate(-90deg) translate(0, -60%)");
       var re = T.schw ? 0 : RE_H;
       var targets = T.track2 ? [T.track, T.track2] : (T.track ? [T.track] : []);
-      for (var q = 0; q < targets.length; q++) {   // from the right at low damping, then straight up into omega_H^(target)
+      for (var q = 0; q < targets.length; q++) {   // from the right at low damping, then in along a straight diagonal
         var tx = X(re), ty = Y(targets[q] * DK), sx = X(0.98), sy = Y(0.04);
-        var c1x = X(re + 0.12), c1y = sy;                     // leave the start horizontally
-        var c2x = tx, c2y = Y(Math.max(0.04, targets[q] * DK - 0.14)); // arrive vertically from below
-        var ex = tx, ey = ty + 15;                            // stop short of the dot
+        var ux = 0.6 / Math.hypot(0.6, 1), uy = 1 / Math.hypot(0.6, 1);   // unit vector from the dot, down and right
+        var ex = tx + 16 * ux, ey = ty + 16 * uy;                          // stop short of the dot
+        var D = Math.min(55, 0.9 * (sy - ey) / uy);                         // straight run in, never below the start
+        var c2x = ex + D * ux, c2y = ey + D * uy;
+        var c1x = c2x + 0.45 * (sx - c2x), c1y = sy;                        // leave the start horizontally
         if (T.fade) { fadingTrack(svg, [sx, sy], [c1x, c1y], [c2x, c2y], [ex, ey]); continue; }
         el(svg, "path", { d: "M" + sx + "," + sy + " C" + c1x + "," + c1y + " " + c2x + "," + c2y + " " + ex + "," + ey,
                           fill: "none", stroke: PURPLE, "stroke-width": 4,
