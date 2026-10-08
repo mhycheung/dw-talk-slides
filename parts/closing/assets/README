@@ -1,0 +1,6 @@
+Assets of the closing part (task t02-slides).
+
+- cheung_waveform_top.png, cheung_waveform_bottom.png: the two panels of the waveform figure
+  of Cheung (2608.29466), copied unchanged from slides/parts/lightring-paper/assets/ (see the
+  README there for how they were cut from the paper's waveform.pdf). Stacked with no gap they
+  reproduce the full figure.

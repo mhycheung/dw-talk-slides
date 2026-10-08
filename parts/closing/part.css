@@ -12,3 +12,24 @@
 .closing-list li {
   margin-bottom: 36px;
 }
+
+/* The two-panel waveform figure of Cheung (2608.29466), shown with bullets 1-3 only
+   (part.js). The two PNGs stacked with no gap are the full figure. */
+.closing-fig {
+  position: absolute;
+  top: 530px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  visibility: hidden;
+}
+
+.closing-fig.closing-shown {
+  visibility: visible;
+}
+
+.closing-fig img {
+  display: block;
+  width: 700px;
+  margin: 0 auto;
+}
