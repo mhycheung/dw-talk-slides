@@ -17,44 +17,17 @@
   <h1 class="title">Horizon modes</h1>
   <canvas class="horizon-modes-canvas" style="left:40px; top:160px; width:860px; height:860px"></canvas>
 
-  <div class="horizon-modes-eq" data-step="2">
-    $$\begin{aligned}
-    &\text{source + integral terms}\\
-    &\sim e^{-im\Omega_H u}\Big[{\color{#ee4266}c_1\Delta} + {\color{#ff8c00}c_2\Delta^2} + {\color{#2a9d8f}c_3\Delta^3} + {\color{#3a86ff}c_4\Delta^4} + {\color{#8338ec}c_5\Delta^5} + \cdots\Big]\\
-    &\Delta \equiv r_p - r_+ \propto e^{-\kappa u}
-    \end{aligned}$$
+  <div class="horizon-modes-right">
+    <div class="horizon-modes-eq">
+      <div class="horizon-modes-int">$\displaystyle\int_{r_+}^{r_p(u)} \! dr\; \underbrace{G(r)}_{\text{Green's function}} \, \underbrace{S(r)}_{\text{source}}$</div>
+      <div class="horizon-modes-sum">
+        <span>$\sim e^{-im\Omega_H u}\Big[$</span><span class="horizon-modes-term" data-n="1">$\color{#ee4266}c_1\epsilon$</span><span class="horizon-modes-term" data-n="2">${}+{}\color{#ff8c00}c_2\epsilon^2$</span><span class="horizon-modes-term" data-n="3">${}+{}\color{#2a9d8f}c_3\epsilon^3$</span><span class="horizon-modes-term" data-n="4">${}+{}\color{#3a86ff}c_4\epsilon^4$</span><span class="horizon-modes-term" data-n="5">${}+{}\color{#8338ec}c_5\epsilon^5$</span><span class="horizon-modes-term" data-n="6">${}+{}\cdots$</span><span>$\Big]$</span>
+      </div>
+      <div class="horizon-modes-def">$\epsilon \equiv r_p(u) - r_+ \propto e^{-\kappa u}$</div>
+    </div>
+    <svg class="horizon-modes-plane" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+    <div class="horizon-modes-labs"></div>
   </div>
-
-  <svg class="horizon-modes-plane" width="1920" height="1080" viewBox="0 0 1920 1080">
-    <defs>
-      <marker id="horizon-modes-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M0,0 L10,5 L0,10 z" fill="#000"/>
-      </marker>
-    </defs>
-    <g data-step="1">
-      <line x1="1010" y1="450" x2="1860" y2="450" stroke="#000" stroke-width="3" marker-end="url(#horizon-modes-arrow)"/>
-      <line x1="1150" y1="1010" x2="1150" y2="410" stroke="#000" stroke-width="3" marker-end="url(#horizon-modes-arrow)"/>
-      <line x1="1480" y1="440" x2="1480" y2="460" stroke="#000" stroke-width="3"/>
-      <line x1="1480" y1="460" x2="1480" y2="1000" stroke="#999" stroke-width="2" stroke-dasharray="8 8"/>
-      <circle cx="1480" cy="545" r="13" fill="#ee4266"/>
-    </g>
-    <g data-step="3">
-      <circle cx="1480" cy="640" r="13" fill="#ff8c00"/>
-      <circle cx="1480" cy="735" r="13" fill="#2a9d8f"/>
-      <circle cx="1480" cy="830" r="13" fill="#3a86ff"/>
-      <circle cx="1480" cy="925" r="13" fill="#8338ec"/>
-    </g>
-  </svg>
-
-  <div class="horizon-modes-lab" data-step="1" style="left:1770px; top:462px">$\mathrm{Re}\,\omega$</div>
-  <div class="horizon-modes-lab" data-step="1" style="left:1010px; top:398px">$\mathrm{Im}\,\omega$</div>
-  <div class="horizon-modes-lab" data-step="1" style="left:1430px; top:392px">$m\Omega_H$</div>
-  <div class="horizon-modes-lab" data-step="1" style="left:1505px; top:518px">$\color{#ee4266}\omega_H^{(1)} = m\Omega_H - i\kappa$</div>
-  <div class="horizon-modes-lab" data-step="3" style="left:1505px; top:613px">$\color{#ff8c00}\omega_H^{(2)} = m\Omega_H - 2i\kappa$</div>
-  <div class="horizon-modes-lab" data-step="3" style="left:1505px; top:708px">$\color{#2a9d8f}\omega_H^{(3)} = m\Omega_H - 3i\kappa$</div>
-  <div class="horizon-modes-lab" data-step="3" style="left:1505px; top:803px">$\color{#3a86ff}\omega_H^{(4)} = m\Omega_H - 4i\kappa$</div>
-  <div class="horizon-modes-lab" data-step="3" style="left:1505px; top:898px">$\color{#8338ec}\omega_H^{(5)} = m\Omega_H - 5i\kappa$</div>
-  <div class="horizon-modes-lab" data-step="3" style="left:1469px; top:950px">$\vdots$</div>
 </section>
 </div>
 <script src="vendor/katex/katex.min.js"></script>

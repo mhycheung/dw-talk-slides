@@ -2,6 +2,14 @@
   position: absolute;
 }
 
+.horizon-modes-right {
+  visibility: hidden;
+}
+
+.horizon-modes-right.horizon-modes-on {
+  visibility: visible;
+}
+
 .horizon-modes-plane {
   position: absolute;
   top: 0;
@@ -11,14 +19,33 @@
 
 .horizon-modes-eq {
   position: absolute;
-  top: 130px;
-  left: 940px;
-  width: 960px;
-  font-size: 33px;
+  top: 118px;
+  left: 950px;
+  width: 940px;
+  font-size: 34px;
+}
+
+.horizon-modes-int {
+  white-space: nowrap;
+  margin-bottom: 6px;
+}
+
+.horizon-modes-sum,
+.horizon-modes-def {
+  white-space: nowrap;
+  margin-left: 20px;
+}
+
+.horizon-modes-def {
+  margin-top: 6px;
+}
+
+.horizon-modes-right .horizon-modes-hid {
+  visibility: hidden;
 }
 
 .horizon-modes-lab {
   position: absolute;
-  font-size: 40px;
   white-space: nowrap;
+  transform: translateY(-50%);
 }

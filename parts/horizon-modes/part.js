@@ -1,10 +1,12 @@
 // horizon-modes-main: left, the chi = 0.7 plunge of Cheung (2608.29466) in Boyer-Lindquist
-// coordinates, played in coordinate time t (faster far out, slower near the horizon), one colour, with a fading tail. After
-// the recorded worldline ends (r = r_+ (1 + 1e-6)) the particle stays on r = r_+ and rotates
-// at Omega_H, for as long as the slide is shown.
+// coordinates, played in coordinate time t (faster far out, slower near the horizon), one
+// colour, with a fading tail. After the recorded worldline ends (r = r_+ (1 + 1e-6)) the
+// particle stays on r = r_+ and rotates at Omega_H, for as long as the slide is shown.
 // Stage 1: the particle fades (exponentially, over several orbits), reappears abruptly on the
-// horizon at full brightness, and fades again, indefinitely. Right: the complex plane with
-// omega_H^(1) (data-step in part.html). Stage 2: the equation. Stage 3: omega_H^(2..5).
+// horizon at full brightness, and fades again, indefinitely. Right: the schematic equation with
+// its first term c_1 eps, and the plot of -Im(M omega) against Re(M omega) with omega_H^(1).
+// Stage 2: the terms c_n eps^n and the modes omega_H^(n) = m Omega_H - i n kappa, n = 2..5,
+// then "+ ..." and a vertical ellipsis, appear one pair at a time without further key presses.
 (function () {
   "use strict";
 
@@ -111,11 +113,99 @@
     raf = requestAnimationFrame(frame);
   }
 
+  // ---------------------------------------------------------------- the frequency plot
+  var NMODE = 5, T_ADD = 0.7;        // modes shown; s between successive terms at stage 2
+  var COLS = ["#ee4266", "#ff8c00", "#2a9d8f", "#3a86ff", "#8338ec"];
+  var PX0 = 1100, PX1 = 1830, PY0 = 915, PY1 = 430;   // frame: left, right, bottom, top (px)
+  var XR = [0, 1.0], YR = [0, 1.4];  // Re(M omega), -Im(M omega)
+  var NS = "http://www.w3.org/2000/svg";
+  var built = false, shown = 0, timers = [];
+  function PX(x) { return PX0 + (x - XR[0]) / (XR[1] - XR[0]) * (PX1 - PX0); }
+  function PY(y) { return PY0 - (y - YR[0]) / (YR[1] - YR[0]) * (PY0 - PY1); }
+
+  function el(parent, name, at) {
+    var n = document.createElementNS(NS, name);
+    for (var k in at) n.setAttribute(k, at[k]);
+    parent.appendChild(n);
+    return n;
+  }
+  function lab(box, tex, x, y, opt) {
+    var d = document.createElement("div");
+    d.className = "horizon-modes-lab";
+    d.style.left = x + "px"; d.style.top = y + "px";
+    d.style.fontSize = (opt && opt.fs || 34) + "px";
+    if (opt && opt.tf) d.style.transform = opt.tf;
+    katex.render(tex, d);
+    box.appendChild(d);
+    return d;
+  }
+
+  function build(slide) {
+    if (built) return;
+    built = true;
+    var svg = slide.querySelector(".horizon-modes-plane");
+    var box = slide.querySelector(".horizon-modes-labs");
+    var ln = { stroke: "#000", "stroke-width": 2.5 };
+    // guide at Re(M omega) = m Omega_H, under everything else
+    el(svg, "line", { x1: PX(D.m * D.Omega_H), y1: PY0, x2: PX(D.m * D.Omega_H), y2: PY1,
+                      stroke: "#aaa", "stroke-width": 2, "stroke-dasharray": "8 8" });
+    el(svg, "rect", { x: PX0, y: PY1, width: PX1 - PX0, height: PY0 - PY1, fill: "none",
+                      stroke: "#000", "stroke-width": 2.5 });
+    var v, maj, L;
+    for (v = 0; v <= 100; v += 5) {            // x ticks every 0.05, major every 0.2
+      var x = XR[0] + v / 100;
+      if (x > XR[1] + 1e-9) break;
+      maj = v % 20 === 0; L = maj ? 18 : 9;
+      el(svg, "line", { x1: PX(x), y1: PY0, x2: PX(x), y2: PY0 - L, stroke: ln.stroke, "stroke-width": ln["stroke-width"] });
+      el(svg, "line", { x1: PX(x), y1: PY1, x2: PX(x), y2: PY1 + L, stroke: ln.stroke, "stroke-width": ln["stroke-width"] });
+      if (maj) lab(box, x.toFixed(1), PX(x), PY0 + 26, { fs: 32, tf: "translate(-50%, 0)" });
+    }
+    for (v = 0; v <= 140; v += 5) {            // y ticks every 0.05, major every 0.2
+      var y = YR[0] + v / 100;
+      maj = v % 20 === 0; L = maj ? 18 : 9;
+      el(svg, "line", { x1: PX0, y1: PY(y), x2: PX0 + L, y2: PY(y), stroke: ln.stroke, "stroke-width": ln["stroke-width"] });
+      el(svg, "line", { x1: PX1, y1: PY(y), x2: PX1 - L, y2: PY(y), stroke: ln.stroke, "stroke-width": ln["stroke-width"] });
+      if (maj) lab(box, y.toFixed(1), PX0 - 12, PY(y), { fs: 32, tf: "translate(-100%, -50%)" });
+    }
+    lab(box, "\\mathrm{Re}(M\\omega)", (PX0 + PX1) / 2, PY0 + 66, { fs: 36, tf: "translate(-50%, 0)" });
+    lab(box, "-\\mathrm{Im}(M\\omega)", PX0 - 95, (PY0 + PY1) / 2, { fs: 36, tf: "translate(-50%, -50%) rotate(-90deg)" });
+    lab(box, "\\chi = " + D.chi + ",\\ m = " + D.m, PX1 - 24, PY1 + 40, { fs: 32, tf: "translate(-100%, -50%)" });
+    for (var n = 1; n <= NMODE; n++) {
+      var cx = PX(D.m * D.Omega_H), cy = PY(n * D.kappa);
+      var c = el(svg, "circle", { cx: cx, cy: cy, r: 12, fill: COLS[n - 1] });
+      c.setAttribute("data-n", n); c.classList.add("horizon-modes-term");
+      var t = lab(box, "\\color{" + COLS[n - 1] + "}\\omega_H^{(" + n + ")} = m\\Omega_H - " +
+                  (n === 1 ? "" : n) + "i\\kappa", cx + 26, cy, { fs: 34 });
+      t.setAttribute("data-n", n); t.classList.add("horizon-modes-term");
+    }
+    var e = lab(box, "\\vdots", PX(D.m * D.Omega_H) - 6, PY((NMODE + 0.75) * D.kappa), { fs: 34 });
+    e.setAttribute("data-n", NMODE + 1); e.classList.add("horizon-modes-term");
+  }
+
+  function upto(slide, n) {          // show terms and modes 1..n (n = NMODE + 1: the ellipses)
+    shown = n;
+    var els = slide.querySelectorAll(".horizon-modes-term");
+    for (var i = 0; i < els.length; i++)
+      els[i].classList.toggle("horizon-modes-hid", Number(els[i].getAttribute("data-n")) > n);
+  }
+
+  function clearTimers() {
+    while (timers.length) clearTimeout(timers.pop());
+  }
+
   Deck.widget("horizon-modes-main", {
-    steps: 3,
+    steps: 2,
     enter: function () {},
-    leave: function () { stop(); },
+    leave: function () { stop(); clearTimers(); },
     step: function (slide, k, dir) {
+      build(slide);
+      clearTimers();
+      slide.querySelector(".horizon-modes-right").classList.toggle("horizon-modes-on", k >= 1);
+      if (k <= 1) upto(slide, 1);
+      else if (dir === 1 && shown < NMODE + 1) {
+        for (var j = shown + 1; j <= NMODE + 1; j++)
+          timers.push(setTimeout(upto.bind(null, slide, j), (j - shown - 1) * T_ADD * 1000));
+      } else upto(slide, NMODE + 1);
       if (k === 0) {
         fading = false;
         if (dir !== -1) { t = 0; tail = []; }               // arrival: play the plunge
