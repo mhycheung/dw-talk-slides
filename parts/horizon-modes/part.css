@@ -59,3 +59,22 @@
   text-align: center;
   font-size: 40px;
 }
+
+.horizon-modes-list {
+  position: absolute;
+  top: 135px;
+  left: 80px;
+  width: 1760px;
+  margin: 0;
+  padding-left: 40px;
+  font-size: 40px;
+  line-height: 1.22;
+}
+
+.horizon-modes-list li {
+  margin-bottom: 16px;
+}
+
+.horizon-modes-list .cite {
+  font-size: 40px;
+}
