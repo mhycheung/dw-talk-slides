@@ -13,6 +13,22 @@
 <div class="deck">
 <!-- part: td-filter -->
 <script src="parts/td-filter/assets/plunge.js"></script>
+<section class="slide" id="td-filter-deriv">
+  <div class="td-filter-deriv">
+    <div class="td-filter-dlabel">frequency domain</div>
+    <div>$$\mathcal{F}(\omega) = \frac{\omega - \omega_{\ell mn}}{\omega - \omega_{\ell mn}^*}$$<span data-step="1">$$\;= 1 - \frac{2i\,\mathrm{Im}(\omega_{\ell mn})}{\omega - \omega_{\ell mn}^*}$$</span></div>
+    <div class="td-filter-dlabel" data-step="2">time domain</div>
+    <div data-step="2">$$F(\tau) = \sqrt{2\pi}\left[\delta(\tau) + 2\,\mathrm{Im}(\omega_{\ell mn})\, e^{-i\omega_{\ell mn}^*\tau}\,\Theta(-\tau)\right]$$</div>
+    <div class="td-filter-dtext" data-step="3">The filtered waveform in the time domain is a convolution:</div>
+    <div class="td-filter-dlabel" data-step="3">frequency domain</div>
+    <div data-step="3">$$\tilde{\Psi}(\omega) \to \mathcal{F}(\omega)\,\tilde{\Psi}(\omega)$$</div>
+    <div class="td-filter-dlabel" data-step="3">time domain</div>
+    <div data-step="3">$$\hat{\Psi}(t) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} F(\tau)\,\Psi(t-\tau)\,d\tau$$</div>
+    <div data-step="4"></div>
+    <div data-step="4">$$\hat{\Psi}(t) = \Psi(t) - \frac{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,\Psi(t+\tau)\,d\tau}{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,e^{-i\omega_{\ell mn}\tau}\,d\tau}$$</div>
+  </div>
+</section>
+
 <section class="slide" id="td-filter-n17">
   <div class="td-filter-eq">
     $$\hat{\Psi}(t) = \Psi(t)\left[ 1 - \frac{\left( Q_{220} \,|\, \psi\right)_\tau}{\left(Q_{220} \,|\, Q_{220} \right)_\tau}\right]$$

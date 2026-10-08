@@ -66,3 +66,34 @@
 
 .td-filter-tick { font-size: 34px; }
 .td-filter-axlabel { font-size: 42px; }
+
+.td-filter-deriv {
+  position: absolute;
+  top: 70px;
+  left: 140px;
+  right: 100px;
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  column-gap: 40px;
+  row-gap: 18px;
+  align-items: center;
+  font-size: 44px;
+}
+
+.td-filter-deriv .katex-display {
+  display: inline-block;
+  text-align: left;
+  margin: 0;
+}
+
+.td-filter-dlabel {
+  font-size: 40px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.td-filter-dtext {
+  grid-column: 1 / 3;
+  font-size: 40px;
+  margin-top: 30px;
+}
