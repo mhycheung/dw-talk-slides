@@ -133,19 +133,11 @@
   visibility: hidden;
 }
 
-/* "Kerr, unfiltered" for Weller+, to the right of their credit (user, 2026-10-08). */
-.horizon-modes-tile .horizon-modes-wfilt {
-  left: 430px;
-  top: 244px;
-  visibility: hidden;
-}
-
 .horizon-modes-sun2 {
   visibility: hidden;
 }
 
 .horizon-modes-tile.horizon-modes-v2 .horizon-modes-weller,
-.horizon-modes-tile.horizon-modes-v2 .horizon-modes-wfilt,
 .horizon-modes-tile.horizon-modes-v2 .horizon-modes-sun2 {
   visibility: visible;
 }
