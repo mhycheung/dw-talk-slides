@@ -24,10 +24,9 @@
   position: absolute;
   left: 860px;
   width: 360px;
-  text-align: right;
-  font-size: 64px;
+  text-align: left;
+  font-size: 52px;
   font-weight: bold;
-  color: #000;
 }
 
 .td-filter-label-top { top: 262px; }
