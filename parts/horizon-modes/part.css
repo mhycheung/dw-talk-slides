@@ -1,0 +1,24 @@
+.horizon-modes-canvas {
+  position: absolute;
+}
+
+.horizon-modes-plane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.horizon-modes-eq {
+  position: absolute;
+  top: 130px;
+  left: 940px;
+  width: 960px;
+  font-size: 33px;
+}
+
+.horizon-modes-lab {
+  position: absolute;
+  font-size: 40px;
+  white-space: nowrap;
+}

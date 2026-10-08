@@ -1,0 +1,5 @@
+Assets of the horizon-modes part (task t05-horizon-modes).
+
+- horizon-modes-traj.js: the chi = 0.7, lambda = 1.0 plunge worldline of Cheung (2608.29466),
+  Boyer-Lindquist coordinates, M = 1, resampled every 0.1 M in t; made by
+  tasks/t05-horizon-modes/S1/make_traj.py.
