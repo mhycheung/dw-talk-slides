@@ -224,13 +224,13 @@
 // a seventh key press updates the Sun+ tile (see the widget below).
 // Each tile: credit, schematic equation, and a schematic plot of -Im(omega) against Re(omega)
 // with omega_H^(1..4) (on the imaginary axis for the Schwarzschild papers), red crosses on the
-// modes the paper finds screened, a ring on the mode that survives, and a purple track for the
+// modes the paper finds screened (dashed: screened only at leading order), and a purple track for the
 // instantaneous frequency and the mode it approaches. Positions are schematic, not to scale.
 (function () {
   "use strict";
 
   var TILES = [                      // record: tasks/t05-horizon-modes/context.md, subcontext/lit_*.md
-    { schw: false, cross: [1], ring: [2], track: 0 },         // Zimmerman+: omega_H^(2) at next order
+    { schw: false, cross: [1], dcross: [2], ring: [], track: 0 }, // Zimmerman+: omega_H^(1) cancelled exactly; omega_H^(2) cancelled at leading order only (dashed), returns at next order
     { schw: false, cross: [1, 2, 3, 4], ring: [], track: 1 }, // Oshita+: omega_G -> omega_H^(1) (their l.204)
     { schw: true, cross: [1, 2, 3, 4], ring: [], track: 0 },  // Kuntz+: all vanish, Schwarzschild
     { schw: true, cross: [1], ring: [], track: 1 },           // Ma+: e^{-kappa u} pieces cancel; omega ~ omega_G
@@ -298,11 +298,14 @@
         el(svg, "circle", { cx: px, cy: py, r: 7, fill: "#000" });
         if (T.ring.indexOf(n) >= 0)
           el(svg, "circle", { cx: px, cy: py, r: 15, fill: "none", stroke: PURPLE, "stroke-width": 4 });
-        if (T.cross.indexOf(n) >= 0) {
+        var dashed = (T.dcross || []).indexOf(n) >= 0;
+        if (T.cross.indexOf(n) >= 0 || dashed) {
           var c = 13;
           el(svg, "path", { d: "M" + (px - c) + "," + (py - c) + " L" + (px + c) + "," + (py + c) +
                                " M" + (px - c) + "," + (py + c) + " L" + (px + c) + "," + (py - c),
-                            stroke: RED, "stroke-width": 4.5, "stroke-linecap": "round" });
+                            stroke: RED, "stroke-width": 4.5,
+                            "stroke-dasharray": dashed ? "7 4" : "none",
+                            "stroke-linecap": dashed ? "butt" : "round" });
         }
         if (T.schw) lab(tile, svg, "\\omega_H^{(" + n + ")}", px + 20, py);
         else lab(tile, svg, "\\omega_H^{(" + n + ")}", px - 20, py, "translate(-100%, -50%)");  // left: clear of the track

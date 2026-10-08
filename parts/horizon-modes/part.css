@@ -145,3 +145,12 @@
 .horizon-modes-tile.horizon-modes-v2 .horizon-modes-sun1 {
   visibility: hidden;
 }
+
+/* Zimmerman+ tile: three equation lines, slightly smaller so they clear the plot. */
+.horizon-modes-teq.horizon-modes-zc {
+  font-size: 24px;
+}
+
+.horizon-modes-zc .katex-display {
+  margin: 0 0 4px;
+}
