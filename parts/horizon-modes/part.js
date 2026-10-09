@@ -357,3 +357,81 @@
     }
   });
 })();
+
+// horizon-modes-screened, Kuntz+ and Ma+ tiles: the same Penrose diagram of the Schwarzschild
+// exterior with a plunging worldline, an observer at retarded time u on scri+, and the outgoing
+// light ray that reaches it. Shaded: the observer's causal past. data-pen="past" highlights the
+// worldline inside it (Kuntz+: unfiltered, source integrated up to the light cone);
+// data-pen="future" highlights the worldline between the light ray and the horizon (Ma+: the
+// anti-causal part of the filtered Green's function, source integrated from the light cone to r_+).
+(function () {
+  "use strict";
+  var NS = "http://www.w3.org/2000/svg", PURPLE = "#540d6e";
+  var W = 340, H = 196, CX = 170, CY = 98, A = 92;   // diamond centre and half-size
+  function el(p, n, at) {
+    var e = document.createElementNS(NS, n);
+    for (var k in at) e.setAttribute(k, at[k]);
+    p.appendChild(e);
+    return e;
+  }
+  function lab(box, tex, x, y, tf) {
+    var d = document.createElement("div");
+    d.style.position = "absolute";
+    d.style.left = x + "px";
+    d.style.top = y + "px";
+    d.style.fontSize = "26px";
+    d.style.whiteSpace = "nowrap";
+    d.style.transform = tf;
+    katex.render(tex, d);
+    box.appendChild(d);
+  }
+  function draw(box) {
+    if (box.firstChild) return;
+    var mode = box.getAttribute("data-pen");
+    var svg = el(box, "svg", { width: W, height: H, viewBox: "0 0 " + W + " " + H });
+    var B = [CX - A, CY], T = [CX, CY - A], R = [CX + A, CY], L = [CX, CY + A];
+    var s = 40, P = [T[0] + s, T[1] + s];                    // observer on scri+
+    var K = P[0] + P[1];                                     // the light ray: x + y = K
+    var Hm = [B[0] + (K - B[0] - B[1]) / 2, B[1] + (K - B[0] - B[1]) / 2];  // ray meets the past horizon
+    el(svg, "polygon", { points: [P, R, L, Hm].map(function (p) { return p.join(","); }).join(" "),
+                         fill: "#ece4f0" });
+    el(svg, "polygon", { points: [B, T, R, L].map(function (p) { return p.join(","); }).join(" "),
+                         fill: "none", stroke: "#000", "stroke-width": 2.5 });
+    // worldline: a cubic from near i^- to the future horizon
+    var p0 = [CX + 6, CY + A - 14], p1 = [CX + 28, CY + 30], p2 = [CX - 10, CY - 20], p3 = [B[0] + 60, B[1] - 60];
+    function C(t) {
+      var u = 1 - t;
+      return [u*u*u*p0[0] + 3*u*u*t*p1[0] + 3*u*t*t*p2[0] + t*t*t*p3[0],
+              u*u*u*p0[1] + 3*u*u*t*p1[1] + 3*u*t*t*p2[1] + t*t*t*p3[1]];
+    }
+    var lo = 0, hi = 1;                                      // crossing of the worldline with the ray
+    for (var it = 0; it < 50; it++) { var m = (lo + hi) / 2, q = C(m); if (q[0] + q[1] > K) lo = m; else hi = m; }
+    var tq = (lo + hi) / 2, Q = C(tq);
+    function seg(t0, t1, hot) {
+      var pts = [];
+      for (var k = 0; k <= 40; k++) pts.push(C(t0 + (t1 - t0) * k / 40).join(","));
+      el(svg, "polyline", { points: pts.join(" "), fill: "none",
+                            stroke: hot ? PURPLE : "#888", "stroke-width": hot ? 5 : 2.5,
+                            "stroke-dasharray": hot ? "none" : "6 5" });
+    }
+    seg(0, tq, mode === "past");
+    seg(tq, 1, mode === "future");
+    var mk = el(el(svg, "defs", {}), "marker", { id: "horizon-modes-pen-" + mode, viewBox: "0 0 10 10",
+                refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: "auto" });
+    el(mk, "path", { d: "M0,0 L10,5 L0,10 z", fill: "#d07000" });
+    el(svg, "line", { x1: Q[0], y1: Q[1], x2: P[0] - 3, y2: P[1] + 3, stroke: "#d07000", "stroke-width": 3,
+                      "marker-end": "url(#horizon-modes-pen-" + mode + ")" });
+    el(svg, "circle", { cx: P[0], cy: P[1], r: 6, fill: "#000" });
+    lab(box, "\\mathcal H^+", (B[0] + T[0]) / 2 - 8, (B[1] + T[1]) / 2 - 6, "translate(-100%, -50%)");
+    lab(box, "\\mathscr I^+", (T[0] + R[0]) / 2 + 22, (T[1] + R[1]) / 2 - 4, "translate(0, -50%)");
+    lab(box, "u", P[0] + 10, P[1] - 10, "translate(0, -100%)");
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    var boxes = document.querySelectorAll(".horizon-modes-pen");
+    for (var i = 0; i < boxes.length; i++) draw(boxes[i]);
+  });
+  if (document.readyState !== "loading") {
+    var boxes = document.querySelectorAll(".horizon-modes-pen");
+    for (var i = 0; i < boxes.length; i++) draw(boxes[i]);
+  }
+})();

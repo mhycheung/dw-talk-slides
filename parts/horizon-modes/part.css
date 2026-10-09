@@ -124,16 +124,15 @@
    Weller credit below it. */
 .horizon-modes-sunline {
   position: absolute;
-  left: 18px;
-  top: 192px;
-  width: 590px;
-  text-align: center;
+  left: 30px;
+  top: 232px;
   font-size: 28px;
 }
 
 .horizon-modes-tile .horizon-modes-weller {
-  left: 18px;
-  top: 238px;
+  left: 300px;
+  top: 229px;
+  font-size: 36px;
   visibility: hidden;
 }
 
@@ -220,4 +219,21 @@
   border: 5px solid #540d6e;
   background: #f6eefa;
   font-weight: bold;
+}
+
+/* Kuntz+ and Ma+ tiles: one Penrose diagram of the exterior, drawn by part.js. "past": the
+   worldline inside the observer's past light cone is highlighted (unfiltered, causal Green's
+   function); "future": the part outside it, between the light ray and the horizon (filtered,
+   anti-causal part of the Green's function). */
+.horizon-modes-pen {
+  position: absolute;
+  left: 140px;
+  top: 88px;
+  width: 340px;
+  height: 196px;
+}
+
+/* Sun+ tile: two equation lines above the omega_DW line. */
+.horizon-modes-sunq .katex-display {
+  margin: 0 0 2px;
 }
