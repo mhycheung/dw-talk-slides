@@ -102,10 +102,39 @@
     else if (cur > 0) go(cur - 1, totals[cur - 1], -1);
   }
 
+  // Laser pointer: the L key hides the mouse cursor and draws a red dot at its place. The
+  // dot sits outside the scaled deck, so its size is in screen pixels. Clicks still work.
+  var laserEl = null;
+
+  function laserMove(e) {
+    laserEl.style.transform = "translate(" + e.clientX + "px," + e.clientY + "px)";
+    laserEl.classList.add("seen");
+  }
+
+  function laserHide() { laserEl.classList.remove("seen"); }
+
+  function toggleLaser() {
+    if (!laserEl) {
+      laserEl = document.createElement("div");
+      laserEl.className = "deck-laser";
+      document.body.appendChild(laserEl);
+      document.addEventListener("pointermove", laserMove, true);
+      document.addEventListener("pointerdown", laserMove, true);
+      document.documentElement.addEventListener("mouseleave", laserHide);
+    }
+    document.body.classList.toggle("laser");
+  }
+
   // Capture phase: runs before any widget sees the key, and cancels the key's default
   // action, so a focused slider or button never takes a navigation key.
   function onKey(e) {
     if (e.ctrlKey || e.altKey || e.metaKey) return;
+    if (e.key === "l" || e.key === "L") {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.type === "keydown" && !e.repeat) toggleLaser();
+      return;
+    }
     var n = NEXT[e.key], p = PREV[e.key];
     if (!n && !p) return;
     e.preventDefault();

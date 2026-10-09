@@ -138,3 +138,28 @@ html, body {
   color: #b8b8b8;
   pointer-events: none;
 }
+
+/* Laser pointer, toggled with the L key (deck.js): the cursor is hidden and a red dot drawn
+   in its place, in screen pixels, above everything; it does not take clicks. */
+body.laser,
+body.laser * {
+  cursor: none !important;
+}
+
+.deck-laser {
+  display: none;
+  position: fixed;
+  left: -9px;
+  top: -9px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ff6060 0%, #ff0000 45%, rgba(255, 0, 0, 0.6) 70%, rgba(255, 0, 0, 0) 100%);
+  box-shadow: 0 0 10px 4px rgba(255, 0, 0, 0.45);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+body.laser .deck-laser.seen {
+  display: block;
+}
