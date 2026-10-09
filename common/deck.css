@@ -139,8 +139,15 @@ html, body {
   pointer-events: none;
 }
 
+/* Text selected by dragging: yellow background, black text. */
+::selection {
+  background: #ffeb3b;
+  color: #000;
+}
+
 /* Laser pointer, toggled with the L key (deck.js): the cursor is hidden and a red dot drawn
-   in its place, in screen pixels, above everything; it does not take clicks. */
+   in its place, in screen pixels, above everything; it does not take clicks. + and - set
+   --laser-size. */
 body.laser,
 body.laser * {
   cursor: none !important;
@@ -149,13 +156,13 @@ body.laser * {
 .deck-laser {
   display: none;
   position: fixed;
-  left: -9px;
-  top: -9px;
-  width: 18px;
-  height: 18px;
+  left: calc(var(--laser-size, 12px) / -2);
+  top: calc(var(--laser-size, 12px) / -2);
+  width: var(--laser-size, 12px);
+  height: var(--laser-size, 12px);
   border-radius: 50%;
   background: radial-gradient(circle, #ff6060 0%, #ff0000 45%, rgba(255, 0, 0, 0.6) 70%, rgba(255, 0, 0, 0) 100%);
-  box-shadow: 0 0 10px 4px rgba(255, 0, 0, 0.45);
+  box-shadow: 0 0 calc(var(--laser-size, 12px) / 2) calc(var(--laser-size, 12px) / 5) rgba(255, 0, 0, 0.45);
   z-index: 1000;
   pointer-events: none;
 }

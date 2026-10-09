@@ -104,7 +104,14 @@
 
   // Laser pointer: the L key hides the mouse cursor and draws a red dot at its place. The
   // dot sits outside the scaled deck, so its size is in screen pixels. Clicks still work.
+  // While it is on, + and - make the dot bigger and smaller.
   var laserEl = null;
+  var laserSize = 12;  // diameter in screen pixels
+
+  function resizeLaser(k) {
+    laserSize = Math.min(80, Math.max(4, Math.round(laserSize * k)));
+    document.documentElement.style.setProperty("--laser-size", laserSize + "px");
+  }
 
   function laserMove(e) {
     laserEl.style.transform = "translate(" + e.clientX + "px," + e.clientY + "px)";
@@ -133,6 +140,13 @@
       e.preventDefault();
       e.stopPropagation();
       if (e.type === "keydown" && !e.repeat) toggleLaser();
+      return;
+    }
+    var grow = { "+": 1.25, "=": 1.25, "-": 0.8, "_": 0.8 }[e.key];
+    if (grow && document.body.classList.contains("laser")) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.type === "keydown") resizeLaser(grow);
       return;
     }
     var n = NEXT[e.key], p = PREV[e.key];
