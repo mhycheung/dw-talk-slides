@@ -120,7 +120,7 @@
 
   function laserHide() { laserEl.classList.remove("seen"); }
 
-  function toggleLaser() {
+  function setLaser(on) {
     if (!laserEl) {
       laserEl = document.createElement("div");
       laserEl.className = "deck-laser";
@@ -129,7 +129,41 @@
       document.addEventListener("pointerdown", laserMove, true);
       document.documentElement.addEventListener("mouseleave", laserHide);
     }
-    document.body.classList.toggle("laser");
+    document.body.classList.toggle("laser", on);
+  }
+
+  function laserOn() { return document.body.classList.contains("laser"); }
+
+  function toggleLaser() { setLaser(!laserOn()); }
+
+  // Holding the right mouse button shows the laser until the button is released; the
+  // browser's context menu never opens. Mouse events, not pointer events, so that a right
+  // press while the left button is down is seen too.
+  var laserHeld = false;
+
+  function onMouse(e) {
+    if (e.button !== 2) return;
+    if (e.type === "mousedown" && !laserOn()) {
+      laserHeld = true;
+      setLaser(true);
+      laserMove(e);
+    } else if (e.type === "mouseup" && laserHeld) {
+      laserHeld = false;
+      setLaser(false);
+    }
+  }
+
+  // Mouse wheel: down is next, up is previous. A wheel event that comes less than 200 ms
+  // after the previous one does nothing, so that one swipe of a trackpad (a burst of events
+  // with momentum) is one step.
+  var lastWheel = 0;
+
+  function onWheel(e) {
+    e.preventDefault();
+    var now = Date.now(), quiet = now - lastWheel > 200;
+    lastWheel = now;
+    if (!quiet || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    if (e.deltaY > 0) next(); else prev();
   }
 
   // Capture phase: runs before any widget sees the key, and cancels the key's default
@@ -139,11 +173,14 @@
     if (e.key === "l" || e.key === "L") {
       e.preventDefault();
       e.stopPropagation();
-      if (e.type === "keydown" && !e.repeat) toggleLaser();
+      if (e.type === "keydown" && !e.repeat) {
+        laserHeld = false;
+        toggleLaser();
+      }
       return;
     }
     var grow = { "+": 1.25, "=": 1.25, "-": 0.8, "_": 0.8 }[e.key];
-    if (grow && document.body.classList.contains("laser")) {
+    if (grow && laserOn()) {
       e.preventDefault();
       e.stopPropagation();
       if (e.type === "keydown") resizeLaser(grow);
@@ -204,6 +241,10 @@
     window.addEventListener("keydown", onKey, true);
     window.addEventListener("keyup", onKey, true);
     window.addEventListener("keypress", onKey, true);
+    window.addEventListener("mousedown", onMouse, true);
+    window.addEventListener("mouseup", onMouse, true);
+    window.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    window.addEventListener("wheel", onWheel, { passive: false });
     var h = parseInt(location.hash.slice(1), 10);
     go(h >= 1 && h <= slides.length ? h - 1 : 0, 0, 1);
   }
