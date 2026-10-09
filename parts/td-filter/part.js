@@ -11,14 +11,18 @@
 // td-filter-plunge: the same filter on the plunge waveform of 2608.29466 (data and the
 // filtered waveform precomputed by tasks/t04-td-filter/plunge_data.py).
 //
-// All panels show |.| (dark) and |Re .| (light) on a log axis, original in blue, filtered in green; on the first two slides
+// The red dashed QNM at each visited time t is the least-squares fit A_fit(t) Q_220(. - t) to Psi after t,
+// so hat Psi(t) = Psi(t) - A_fit(t); a red cross marks A_fit(t) on the original panel and hat Psi(t) on the
+// filtered one.
+// All panels show |.| (dark) and |Re .| (light) on a log axis, original in blue, filtered in red (the red of
+// the fitted QNMs); on the first two slides
 // exact zeros go on a separate "0" row below an axis break.
 (function () {
   "use strict";
 
-  // colours: original panel blue, filtered panel green, each |.| dark and |Re .| light;
+  // colours: original panel blue, filtered panel and fitted QNMs red, each |.| dark and |Re .| light;
   // frame a thin grey box; curves kept PX, PY px clear of the frame
-  var C_AB = "#1f4e9c", C_RE = "#a9c1e8", C_FAB = "#2b7a3d", C_FRE = "#a9d6b2", C_FRAME = "#666";
+  var C_AB = "#1f4e9c", C_RE = "#a9c1e8", C_FAB = "#d62728", C_FRE = "#f2a3a3", C_FRAME = "#666";
   var PX = 36, PY = 26;
 
   var NS = "http://www.w3.org/2000/svg";
@@ -242,10 +246,11 @@
     var sub = (k === 0 || k === KZERO || k >= KFLIP) ? 0 : r % SUB + 1;
     var ts = list[idx];
 
+    // A_fit(t): Psi(t) for t >= 0, A e^{-i omega^* t} for t < 0
+    function afit(t) { return t >= 0 ? psiAt(t, W220) : fitAt(t); }
     if (sub >= 2) {
-      // t >= 0: the QNM with amplitude Psi(t_k); t < 0: the unit template Q_220(t - t_k)
-      var a = neg ? [1, 0] : psiAt(ts, W220);
-      pair(svg, TOP, a[0], a[1], ts, W220, "#d62728", "#f2a3a3", true);
+      var a = afit(ts);
+      pair(svg, TOP, a[0], a[1], ts, W220, C_FAB, C_FRE, true);
     }
 
     // filtered for t >= 0: exactly zero, on the "0" row
@@ -258,12 +263,17 @@
             function (t) { return fitAt(t)[0]; }, T0, 0, C_FAB, C_FRE, false);
       el("line", { x1: X(0), x2: X(0), y1: BOT.z, y2: LY(BOT, Math.hypot(AR, AI)), stroke: C_FAB, "stroke-width": 5 }, svg);
     }
-    // points: |filtered| at the times visited
+    // points: |A_fit| on top from the fit's stage on, |filtered| below from the next
+    function topCross(t) { var a = afit(t); cross(svg, X(t), LY(TOP, Math.hypot(a[0], a[1])), C_FAB); }
     var npos = k >= KZERO ? TIMES.length : idx + (sub === SUB ? 1 : 0);
-    for (var j = 0; j < npos; j++) {
+    var ntop = k >= KZERO ? TIMES.length : idx + (sub >= 2 ? 1 : 0);
+    for (var j = 0; j < ntop; j++) topCross(TIMES[j]);
+    for (j = 0; j < npos; j++) {
       cross(svg, X(TIMES[j]), BOT.z, C_FAB);
     }
     var nneg = k >= KFLIP ? NEG.length : neg ? idx + (sub === SUB ? 1 : 0) : 0;
+    var ntopn = k >= KFLIP ? NEG.length : neg ? idx + (sub >= 2 ? 1 : 0) : 0;
+    for (j = 0; j < ntopn; j++) topCross(NEG[j]);
     for (j = 0; j < nneg; j++) {
       var c = fitAt(NEG[j]);
       cross(svg, X(NEG[j]), LY(BOT, Math.hypot(c[0], c[1])), C_FAB);
@@ -284,21 +294,22 @@
   });
 
   // ---------------------------------------------------------------- td-filter-diff
-  // Waveform 330, filter 220. Per time: arrow, dashed Psi(t_k) Q_220, point at
-  // |F(omega_330) Psi(t_k)|; then the whole filtered waveform for t >= 0.
+  // Waveform 330, filter 220. Per time: arrow, dashed fit A_fit(t_k) Q_220 with
+  // A_fit = (1 - F(omega_330)) Psi(t_k), point at |F(omega_330) Psi(t_k)|; then the whole
+  // filtered waveform for t >= 0.
   var DSUB = 3, DLAST = TIMES.length * DSUB + 1;
   var CFG_DIFF = { t0: -10, t1: 40, lmin: -3, zero: true, centre: true, tick: 5, tlab: 10, xlabel: "t/M" };
 
   function drawDiff(slide, k) {
     var svg = base(slide, CFG_DIFF);
     abrupt(svg, W330);
-    var F = filterAt(W330);
+    var F = filterAt(W330), G = [1 - F[0], -F[1]];  // G = 1 - F: A_fit(t) = G Psi(t)
     var last = k >= DLAST, idx = last ? TIMES.length : Math.floor((k - 1) / DSUB);
     var sub = (k === 0 || last) ? 0 : (k - 1) % DSUB + 1;
     var ts = TIMES[idx];
     if (sub >= 2) {
-      var a = psiAt(ts, W330);
-      pair(svg, TOP, a[0], a[1], ts, W220, "#d62728", "#f2a3a3", true);
+      var a = mul(G, psiAt(ts, W330));
+      pair(svg, TOP, a[0], a[1], ts, W220, C_FAB, C_FRE, true);
     }
     // filtered for t >= 0: F(omega_330) times the original
     if (last) {
@@ -306,7 +317,12 @@
       pair(svg, BOT, b[0], b[1], 0, W330, C_FAB, C_FRE, false);
     }
     var npts = last ? TIMES.length : idx + (sub === DSUB ? 1 : 0);
-    for (var j = 0; j < npts; j++) {
+    var ntop = last ? TIMES.length : idx + (sub >= 2 ? 1 : 0);
+    for (var j = 0; j < ntop; j++) {
+      var u = mul(G, psiAt(TIMES[j], W330));
+      cross(svg, X(TIMES[j]), LY(TOP, Math.hypot(u[0], u[1])), C_FAB);
+    }
+    for (j = 0; j < npts; j++) {
       var v = mul(F, psiAt(TIMES[j], W330));
       cross(svg, X(TIMES[j]), LY(BOT, Math.hypot(v[0], v[1])), C_FAB);
     }
@@ -321,8 +337,9 @@
   // ---------------------------------------------------------------- td-filter-plunge
   // Plunge waveform (chi = 0.7), filter 220 (Kerr chi = 0.7, M = 1), t in M from the
   // light-ring crossing, both waveforms divided by max |Psi| in the window.
-  // Per time: arrow, dashed Psi(t_k) Q_220, point at |hat Psi(t_k)|; then the whole
-  // filtered waveform.
+  // Per time: arrow, dashed fit A_fit(t_k) Q_220 with A_fit = Psi - hat Psi (equal to a
+  // direct least-squares fit to the release data to 1e-3), point at |hat Psi(t_k)|; then
+  // the whole filtered waveform.
   var PT = [40, 20, 0, -20, -40];  // visited from late to early
   var PSUB = 3, PLAST = PT.length * PSUB + 1;
   var CFG_PL = { t0: -80, t1: 60, lmin: -4, zero: false, centre: true, tick: 10, tlab: 20, xlabel: "t/M" };
@@ -341,15 +358,22 @@
     var last = k >= PLAST, idx = last ? PT.length : Math.floor((k - 1) / PSUB);
     var sub = (k === 0 || last) ? 0 : (k - 1) % PSUB + 1;
     var ts = PT[idx];
+    function afit(t) { return [sample(D.re, t) - sample(D.fre, t), sample(D.im, t) - sample(D.fim, t)]; }
     if (sub >= 2) {
-      pair(svg, TOP, sample(D.re, ts), sample(D.im, ts), ts, W, "#d62728", "#f2a3a3", true);
+      var a = afit(ts);
+      pair(svg, TOP, a[0], a[1], ts, W, C_FAB, C_FRE, true);
     }
     if (last) {
       curve(svg, BOT, function (t) { return Math.hypot(sample(D.fre, t), sample(D.fim, t)); },
             function (t) { return sample(D.fre, t); }, T0, T1, C_FAB, C_FRE, false);
     }
     var npts = last ? PT.length : idx + (sub === PSUB ? 1 : 0);
-    for (var j = 0; j < npts; j++) {
+    var ntop = last ? PT.length : idx + (sub >= 2 ? 1 : 0);
+    for (var j = 0; j < ntop; j++) {
+      var u = afit(PT[j]);
+      cross(svg, X(PT[j]), LY(TOP, Math.hypot(u[0], u[1])), C_FAB);
+    }
+    for (j = 0; j < npts; j++) {
       var v = Math.hypot(sample(D.fre, PT[j]), sample(D.fim, PT[j]));
       cross(svg, X(PT[j]), LY(BOT, v), C_FAB);
     }

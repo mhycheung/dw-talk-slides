@@ -42,31 +42,25 @@
 <section class="slide" id="td-filter-deriv">
   <div class="td-filter-deriv">
     <div class="td-filter-dlabel">frequency domain</div>
-    <div>$$\mathcal{F}(\omega) = \frac{\omega - \omega_{\ell mn}}{\omega - \omega_{\ell mn}^*}$$<span data-step="1">$$\;= 1 - \frac{2i\,\mathrm{Im}(\omega_{\ell mn})}{\omega - \omega_{\ell mn}^*}$$</span></div>
+    <div>$$\tilde{\Psi}(\omega) \xrightarrow{\text{filter}} \mathcal{F}(\omega)\,\tilde{\Psi}(\omega) = \frac{\omega - \omega_{\ell mn}}{\omega - \omega_{\ell mn}^*}\,\tilde{\Psi}(\omega)$$<span data-step="1">$$\;= \left[1 - \frac{\omega_{\ell mn} - \omega_{\ell mn}^*}{\omega - \omega_{\ell mn}^*}\right]\tilde{\Psi}(\omega)$$</span></div>
     <div class="td-filter-dlabel" data-step="2">time domain</div>
-    <div data-step="2">$$F(\tau) = \sqrt{2\pi}\left[\delta(\tau) + 2\,\mathrm{Im}(\omega_{\ell mn})\, e^{-i\omega_{\ell mn}^*\tau}\,\Theta(-\tau)\right]$$</div>
-    <div class="td-filter-dtext" data-step="3">The filtered waveform in the time domain is a convolution:</div>
-    <div class="td-filter-dlabel" data-step="3">frequency domain</div>
-    <div data-step="3">$$\tilde{\Psi}(\omega) \to \mathcal{F}(\omega)\,\tilde{\Psi}(\omega)$$</div>
-    <div class="td-filter-dlabel" data-step="3">time domain</div>
-    <div data-step="3">$$\hat{\Psi}(t) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} F(\tau)\,\Psi(t-\tau)\,d\tau$$</div>
-    <div data-step="4"></div>
-    <div data-step="4">$$\hat{\Psi}(t) = \Psi(t) - \frac{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,\Psi(t+\tau)\,d\tau}{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,e^{-i\omega_{\ell mn}\tau}\,d\tau}$$</div>
+    <div data-step="2">$$\Psi(t) \xrightarrow{\text{filter}} \Psi(t) - \frac{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,\Psi(t+\tau)\,d\tau}{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,e^{-i\omega_{\ell mn}\tau}\,d\tau}$$</div>
+    <div data-step="3"></div>
+    <div data-step="3">$$= \Psi(t) - \frac{\left( Q_{\ell mn} \,|\, \Psi(t+\tau)\right)_\tau}{\left(Q_{\ell mn} \,|\, Q_{\ell mn} \right)_\tau}$$</div>
   </div>
   <div class="td-filter-see"><span class="cite">See the appendix of <u>Cheung</u> (2608.29466)</span></div>
 </section>
 <section class="slide" id="td-filter-overlap">
   <div class="td-filter-ov">
-    <div>$$\hat{\Psi}(t) = \Psi(t) - \frac{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,\Psi(t+\tau)\,d\tau}{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,e^{-i\omega_{\ell mn}\tau}\,d\tau}$$</div>
-    <div data-step="1">$$\hat{\Psi}(t) = \Psi(t) - \frac{\left( Q_{\ell mn} \,|\, \Psi(t+\tau)\right)_\tau}{\left(Q_{\ell mn} \,|\, Q_{\ell mn} \right)_\tau}$$</div>
+    <div>$$\Psi(t) \xrightarrow{\text{filter}} \Psi(t) - \frac{\left( Q_{\ell mn} \,|\, \Psi(t+\tau)\right)_\tau}{\left(Q_{\ell mn} \,|\, Q_{\ell mn} \right)_\tau}$$</div>
+    <div data-step="1">$$= \Psi(t) - A_{\rm fit}(t)$$</div>
   </div>
-  <div class="td-filter-ovtext" data-step="2">Effect of filter: subtract from the waveform its &ldquo;overlap&rdquo; with a QNM to its future</div>
+  <div class="td-filter-ovtext" data-step="2">where $A_{\rm fit}(t)$ is the amplitude of a QNM fitted to $\Psi(t)$ starting at $t$ (linear least squares)</div>
   <div class="td-filter-see"><span class="cite">See the appendix of <u>Cheung</u> (2608.29466)</span></div>
 </section>
 <section class="slide" id="td-filter-n17">
   <div class="td-filter-eq">
-    $$\hat{\Psi}(t) = \Psi(t) - \frac{\left( Q_{220} \,|\, \Psi(t+\tau)\right)_\tau}{\left(Q_{220} \,|\, Q_{220} \right)_\tau}$$
-    <div class="td-filter-eqtext">Effect of filter: subtract from the waveform its &ldquo;overlap&rdquo; with a QNM to its future</div>
+    $$\Psi(t) \xrightarrow{\text{filter}} \Psi(t) - A_{\rm fit}(t)$$
   </div>
   <svg class="td-filter-plot" data-clip="td-filter-n17-clip-" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
   <div class="td-filter-axes"></div>
@@ -77,8 +71,7 @@
 </section>
 <section class="slide" id="td-filter-diff">
   <div class="td-filter-eq">
-    $$\hat{\Psi}(t) = \Psi(t) - \frac{\left( Q_{220} \,|\, \Psi(t+\tau)\right)_\tau}{\left(Q_{220} \,|\, Q_{220} \right)_\tau}$$
-    <div class="td-filter-eqtext">Effect of filter: subtract from the waveform its &ldquo;overlap&rdquo; with a QNM to its future</div>
+    $$\Psi(t) \xrightarrow{\text{filter}} \Psi(t) - A_{\rm fit}(t)$$
   </div>
   <svg class="td-filter-plot" data-clip="td-filter-diff-clip-" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
   <div class="td-filter-axes"></div>
@@ -225,8 +218,7 @@
 <!-- part: td-filter -->
 <section class="slide" id="td-filter-plunge">
   <div class="td-filter-eq">
-    $$\hat{\Psi}(t) = \Psi(t) - \frac{\left( Q_{220} \,|\, \Psi(t+\tau)\right)_\tau}{\left(Q_{220} \,|\, Q_{220} \right)_\tau}$$
-    <div class="td-filter-eqtext">Effect of filter: subtract from the waveform its &ldquo;overlap&rdquo; with a QNM to its future</div>
+    $$\Psi(t) \xrightarrow{\text{filter}} \Psi(t) - A_{\rm fit}(t)$$
   </div>
   <svg class="td-filter-plot" data-clip="td-filter-plunge-clip-" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
   <div class="td-filter-axes"></div>

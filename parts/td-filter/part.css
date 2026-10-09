@@ -9,11 +9,6 @@
 
 .td-filter-eq .katex-display { margin: 0; }
 
-.td-filter-eqtext {
-  font-size: 40px;
-  margin-top: 6px;
-}
-
 .td-filter-plot {
   position: absolute;
   top: 0;
