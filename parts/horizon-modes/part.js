@@ -230,14 +230,14 @@
 
   var TILES = [                      // record: tasks/t05-horizon-modes/context.md, subcontext/lit_*.md
     { schw: false, cross: [1], dcross: [2], ring: [], track: 0 }, // Zimmerman+: omega_H^(1) cancelled exactly; omega_H^(2) cancelled at leading order only (dashed), returns at next order
-    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 1 }, // Oshita+: omega_G -> omega_H^(1) (their l.204)
+    { schw: false, cross: [1, 2, 3, 4], ring: [], track: 1, fade: true }, // Oshita+: omega_G -> omega_H^(1) (their l.204); fading track as for Ma+ (user, 2026-10-09)
     { schw: true, cross: [1, 2, 3, 4], ring: [], track: 0 },  // Kuntz+: all vanish, Schwarzschild
     { schw: true, cross: [1], ring: [], track: 1, fade: true }, // Ma+: e^{-kappa u} pieces cancel; omega ~ omega_G(u), no limit stated: the track fades out before omega_H^(1)
     { schw: false, cross: [1, 2, 3, 4], ring: [], track: 2, track2: 3 }, // Sun+: v1 omega_DW -> omega_H^(2); last stage: -> omega_H^(3) (v2, Weller+)
     { schw: false, cross: [1, 2, 3, 4], ring: [], track: 0 }  // Kubota+: all cancel
   ];
   var NS = "http://www.w3.org/2000/svg";
-  var X0 = 42, X1 = 292, Y0 = 252, Y1 = 14;   // plot frame in the 300 x 290 svg
+  var X0 = 42, X1 = 292, Y0 = 228, Y1 = 14;   // plot frame in the 300 x 290 svg; Y0 leaves room for the Re label inside the tile
   var RE_H = 0.42, DK = 0.205;                // schematic m Omega_H and kappa, in plot units
   var PURPLE = "#540d6e", RED = "#d00000";
   var SVG_L = 610, SVG_T = 4;                 // svg position in the tile: 916 - 6 (right) - 300; top 4
