@@ -183,7 +183,6 @@
   white-space: nowrap;
   color: #3bceac;
   font-weight: bold;
-  padding: 0 6px;
-  background: rgba(255, 255, 255, 0.85);
+  transform: translate(-50%, -50%);
   visibility: hidden;
 }
