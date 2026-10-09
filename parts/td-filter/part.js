@@ -368,6 +368,14 @@
   // at |hat Psi(t_k)|; then the whole filtered waveform.
   var PT = [40, 20, 0, -20, -40];  // visited from late to early
   var RPL = rounds(PT.length, 0), PLAST = RPL.length + 1;
+  // last stage (after the non-QNM line at PLAST + 1): the direct wave highlighted on the
+  // filtered panel as in the waveform figure of 2608.29466 (scripts/fig_waveform_panel.py of
+  // its release): the filtered curve redrawn in C_DW from its peak (t = -8.1 M here) to the
+  // light-ring crossing t = 0, fading in and out linearly over DW_FADE. The paper ends the
+  // window at -15 M or -2 M for its 16- and 4-zero filters; with the 220 zero alone the
+  // window is taken to the light-ring crossing: after it the filtered curve turns into the 221
+  // overtone (decay 0.24/M, frequency 0.52/M by t = 30 M, measured on plunge.js 2026-10-08).
+  var PDW = PLAST + 2, C_DW = "#3bceac", C_DWRE = "#b1ebdd", DW_END = 0, DW_FADE = 1.5;
   var CFG_PL = { t0: -80, t1: 60, lmin: -4, zero: false, centre: true, tick: 10, tlab: 20, xlabel: "t/M" };
 
   // a stored series, linearly interpolated at t
@@ -393,10 +401,47 @@
       var v = Math.hypot(sample(D.fre, PT[j]), sample(D.fim, PT[j]));
       cross(svg, X(PT[j]), LY(BOT, v), C_FAB);
     }
+    directWave(slide, svg, k >= PDW);
+  }
+
+  // mix of two #rrggbb colours, m = 0 gives a, m = 1 gives b
+  function mix(a, b, m) {
+    var s = "#";
+    for (var i = 1; i < 7; i += 2) {
+      var x = Math.round((1 - m) * parseInt(a.substr(i, 2), 16) + m * parseInt(b.substr(i, 2), 16));
+      s += (x < 16 ? "0" : "") + x.toString(16);
+    }
+    return s;
+  }
+
+  // the direct-wave overlay and its label; on === false hides the label
+  function directWave(slide, svg, on) {
+    var lab = slide.querySelector(".td-filter-dwlabel");
+    lab.style.visibility = on ? "visible" : "hidden";
+    if (!on) return;
+    var D = window.td_filter_plunge;
+    var fa = function (t) { return Math.hypot(sample(D.fre, t), sample(D.fim, t)); };
+    var fr = function (t) { return Math.abs(sample(D.fre, t)); };
+    var t0 = T0, best = -1;
+    for (var t = T0; t <= T1; t += D.dt) { if (fa(t) > best) { best = fa(t); t0 = t; } }
+    var n = 300, clip = clipOf(svg, BOT);
+    [[fr, C_FRE, C_DWRE, 4], [fa, C_FAB, C_DW, 5]].forEach(function (c) {
+      for (var i = 0; i < n; i++) {
+        var ta = t0 + (DW_END - t0) * i / n, tb = t0 + (DW_END - t0) * (i + 1) / n, tm = (ta + tb) / 2;
+        var m = Math.min(1, (tm - t0) / DW_FADE, (DW_END - tm) / DW_FADE);
+        el("line", { x1: X(ta), y1: LY(BOT, c[0](ta)), x2: X(tb), y2: LY(BOT, c[0](tb)), stroke: mix(c[1], c[2], m),
+                     "stroke-width": c[3], "stroke-linecap": "round", "clip-path": clip }, svg);
+      }
+    });
+    // label just below the window, centred on it
+    var tl = (t0 + DW_END) / 2;
+    lab.style.left = X(tl) + "px";
+    lab.style.top = (LY(BOT, fa(tl)) + 48) + "px";
+    lab.style.transform = "translate(-50%, -50%)";
   }
 
   Deck.widget("td-filter-plunge", {
-    steps: PLAST,
+    steps: PDW,
     step: function (slide, k) { drawPlunge(slide, k); }
   });
 })();

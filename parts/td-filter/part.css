@@ -175,3 +175,15 @@
   font-size: 40px;
   color: #d62728;
 }
+
+/* td-filter-plunge, last step: the "direct wave" label on the filtered panel, placed by part.js */
+.td-filter-dwlabel {
+  position: absolute;
+  font-size: 44px;
+  white-space: nowrap;
+  color: #3bceac;
+  font-weight: bold;
+  padding: 0 6px;
+  background: rgba(255, 255, 255, 0.85);
+  visibility: hidden;
+}
