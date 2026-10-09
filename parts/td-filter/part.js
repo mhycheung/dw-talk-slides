@@ -14,15 +14,15 @@
 // The red dashed QNM at each visited time t is the least-squares fit A_fit(t) Q_220(. - t) to Psi after t,
 // so hat Psi(t) = Psi(t) - A_fit(t); a red double-headed arrow labelled A_fit spans |A_fit(t)| on the
 // original panel and a red cross marks |hat Psi(t)| on the filtered one.
-// All panels show |.| (dark) and |Re .| (light) on a log axis, original in blue, filtered in red (the red of
-// the fitted QNMs); on the first two slides
+// All panels show |.| (dark) and |Re .| (light) on a log axis, original in blue, filtered in green, fitted QNMs in
+// red; on the first two slides
 // exact zeros go on a separate "0" row below an axis break.
 (function () {
   "use strict";
 
-  // colours: original panel blue, filtered panel and fitted QNMs red, each |.| dark and |Re .| light;
+  // colours: original panel blue, filtered panel green, fitted QNMs red, each |.| dark and |Re .| light;
   // frame a thin grey box; curves kept PX, PY px clear of the frame
-  var C_AB = "#1f4e9c", C_RE = "#a9c1e8", C_FAB = "#d62728", C_FRE = "#f2a3a3", C_FRAME = "#666";
+  var C_AB = "#1f4e9c", C_RE = "#a9c1e8", C_FAB = "#2b7a3d", C_FRE = "#a9d6b2", C_FIT = "#d62728", C_FITRE = "#f2a3a3", C_FRAME = "#666";
   var PX = 36, PY = 26;
 
   var NS = "http://www.w3.org/2000/svg";
@@ -237,11 +237,11 @@
     var lab = slide.querySelector(".td-filter-alabel");
     if (a === null) { if (lab) lab.style.visibility = "hidden"; return; }
     var yb = ZERO ? TOP.z : LY(TOP, Math.pow(10, LMIN)), ya = LY(TOP, Math.hypot(a[0], a[1]));
-    darrow(svg, X(ts), ya, yb, C_FAB, 4, 11, 20);
+    darrow(svg, X(ts), ya, yb, C_FIT, 4, 11, 20);
     katex.render("A_{\\rm fit}", lab);
     lab.style.left = (X(ts) - 14) + "px";
     lab.style.top = ((ya + yb) / 2) + "px";
-    lab.style.color = C_FAB;
+    lab.style.color = C_FIT;
     lab.style.visibility = "visible";
   }
 
@@ -259,7 +259,7 @@
 
   // the overlays of one stage: t arrow, fitted QNM a Q_220(t - ts), A_fit arrow
   function overlays(slide, svg, ts, sub, a, w) {
-    if (sub >= 2) pair(svg, TOP, a[0], a[1], ts, w, C_FAB, C_FRE, true);
+    if (sub >= 2) pair(svg, TOP, a[0], a[1], ts, w, C_FIT, C_FITRE, true);
     afitArrow(slide, svg, ts, sub >= 3 ? a : null);
     arrow(slide, svg, sub >= 1 ? ts : null);
   }

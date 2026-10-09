@@ -68,13 +68,14 @@
 
 .td-filter-deriv {
   position: absolute;
-  top: 70px;
+  top: 30px;
+  bottom: 120px;
   left: 140px;
   right: 100px;
   display: grid;
   grid-template-columns: 400px 1fr;
   column-gap: 40px;
-  row-gap: 18px;
+  align-content: space-evenly;
   align-items: center;
   font-size: 44px;
 }
@@ -91,29 +92,20 @@
   text-align: right;
 }
 
-.td-filter-dtext {
-  grid-column: 1 / 3;
-  font-size: 40px;
-  margin-top: 30px;
-}
-
 .td-filter-ov {
   position: absolute;
-  top: 130px;
+  top: 30px;
+  bottom: 120px;
   left: 0;
   right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
   text-align: center;
   font-size: 50px;
 }
 
-.td-filter-ov > div { margin-bottom: 70px; }
-
 .td-filter-ovtext {
-  position: absolute;
-  top: 860px;
-  left: 0;
-  right: 0;
-  text-align: center;
   font-size: 44px;
 }
 
