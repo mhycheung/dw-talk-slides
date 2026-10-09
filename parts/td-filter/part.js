@@ -12,8 +12,8 @@
 // filtered waveform precomputed by tasks/t04-td-filter/plunge_data.py).
 //
 // The red dashed QNM at each visited time t is the least-squares fit A_fit(t) Q_220(. - t) to Psi after t,
-// so hat Psi(t) = Psi(t) - A_fit(t); a red cross marks A_fit(t) on the original panel and hat Psi(t) on the
-// filtered one.
+// so hat Psi(t) = Psi(t) - A_fit(t); a red double-headed arrow labelled A_fit spans |A_fit(t)| on the
+// original panel and a red cross marks |hat Psi(t)| on the filtered one.
 // All panels show |.| (dark) and |Re .| (light) on a log axis, original in blue, filtered in red (the red of
 // the fitted QNMs); on the first two slides
 // exact zeros go on a separate "0" row below an axis break.
@@ -213,45 +213,79 @@
     pair(svg, TOP, AR, AI, 0, w, C_AB, C_RE, false);
   }
 
-  // arrow under the top panel at time ts, with its label; ts === null hides it
+  // a vertical line from y1 to y2 (y1 < y2) with arrow heads at both ends
+  function darrow(svg, x, y1, y2, col, sw, hw, hl) {
+    el("line", { x1: x, x2: x, y1: y1 + hl - 2, y2: y2 - hl + 2, stroke: col, "stroke-width": sw }, svg);
+    el("path", { d: "M" + x + " " + y1 + "L" + (x - hw) + " " + (y1 + hl) + "L" + (x + hw) + " " + (y1 + hl) + "Z", fill: col }, svg);
+    el("path", { d: "M" + x + " " + y2 + "L" + (x - hw) + " " + (y2 - hl) + "L" + (x + hw) + " " + (y2 - hl) + "Z", fill: col }, svg);
+  }
+
+  // double-headed arrow between the panels at time ts, with its label; ts === null hides it
   function arrow(slide, svg, ts) {
     var tl = slide.querySelector(".td-filter-tlabel");
     if (ts === null) { tl.style.visibility = "hidden"; return; }
-    var x = X(ts), yTip = TOP.y1 + 6, yTail = TOP.y1 + 80;
-    el("line", { x1: x, x2: x, y1: yTail, y2: yTip + 22, stroke: "#000", "stroke-width": 6 }, svg);
-    el("path", { d: "M" + x + " " + yTip + "L" + (x - 15) + " " + (yTip + 28) + "L" + (x + 15) + " " + (yTip + 28) + "Z",
-                 fill: "#000" }, svg);
+    var x = X(ts);
+    darrow(svg, x, TOP.y1 + 6, BOT.y0 - 6, "#000", 6, 15, 28);
     katex.render("t = " + ts, tl);
     tl.style.left = (x + 20) + "px";
     tl.style.visibility = "visible";
   }
 
+  // red double-headed arrow on the original panel at ts, from 0 (the "0" row, or the bottom
+  // of the log range) up to |a|, labelled A_fit; a === null hides it
+  function afitArrow(slide, svg, ts, a) {
+    var lab = slide.querySelector(".td-filter-alabel");
+    if (a === null) { if (lab) lab.style.visibility = "hidden"; return; }
+    var yb = ZERO ? TOP.z : LY(TOP, Math.pow(10, LMIN)), ya = LY(TOP, Math.hypot(a[0], a[1]));
+    darrow(svg, X(ts), ya, yb, C_FAB, 4, 11, 20);
+    katex.render("A_{\\rm fit}", lab);
+    lab.style.left = (X(ts) - 14) + "px";
+    lab.style.top = ((ya + yb) / 2) + "px";
+    lab.style.color = C_FAB;
+    lab.style.visibility = "visible";
+  }
+
+  // Stages of a round of visited times: the first nslow times take four clicks (t arrow;
+  // fitted QNM; A_fit arrow; cross below), the rest two (t arrow; all three at once).
+  // Returns [time index, sub-stage 1..4] per stage.
+  function rounds(n, nslow) {
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      if (i < nslow) out.push([i, 1], [i, 2], [i, 3], [i, 4]);
+      else out.push([i, 1], [i, 4]);
+    }
+    return out;
+  }
+
+  // the overlays of one stage: t arrow, fitted QNM a Q_220(t - ts), A_fit arrow
+  function overlays(slide, svg, ts, sub, a, w) {
+    if (sub >= 2) pair(svg, TOP, a[0], a[1], ts, w, C_FAB, C_FRE, true);
+    afitArrow(slide, svg, ts, sub >= 3 ? a : null);
+    arrow(slide, svg, sub >= 1 ? ts : null);
+  }
+
   // ---------------------------------------------------------------- td-filter-n17
   var TIMES = [0, 5, 10];         // times visited one after another, t >= 0
   var NEG = [-5, -10, -15];       // then these, t < 0
-  var SUB = 3;                    // stages per time: arrow, dashed QNM, point
-  var KZERO = TIMES.length * SUB + 1;        // stage: the filtered waveform is 0 for t >= 0
-  var KFLIP = KZERO + NEG.length * SUB + 1;  // stage: the flipped ringdown for t < 0
+  var RPOS = rounds(TIMES.length, 2), RNEG = rounds(NEG.length, 0);
+  var KZERO = RPOS.length + 1;               // stage: the filtered waveform is 0 for t >= 0
+  var KFLIP = KZERO + RNEG.length + 1;       // stage: the flipped ringdown for t < 0
   var CFG_N17 = { t0: -40, t1: 40, lmin: -3, zero: true, centre: true, tick: 5, tlab: 20, xlabel: "t/M" };
+
+  // A_fit(t): Psi(t) for t >= 0, A e^{-i omega^* t} for t < 0
+  function afit17(t) { return t >= 0 ? psiAt(t, W220) : fitAt(t); }
 
   function draw(slide, k) {
     var svg = base(slide, CFG_N17);
     abrupt(svg, W220);
 
     // which time and sub-stage k shows; neg: the t < 0 round
-    var neg = k > KZERO && k < KFLIP;
-    var r = neg ? k - KZERO - 1 : k - 1;
-    var list = neg ? NEG : TIMES;
-    var idx = Math.floor(r / SUB);
-    var sub = (k === 0 || k === KZERO || k >= KFLIP) ? 0 : r % SUB + 1;
-    var ts = list[idx];
-
-    // A_fit(t): Psi(t) for t >= 0, A e^{-i omega^* t} for t < 0
-    function afit(t) { return t >= 0 ? psiAt(t, W220) : fitAt(t); }
-    if (sub >= 2) {
-      var a = afit(ts);
-      pair(svg, TOP, a[0], a[1], ts, W220, C_FAB, C_FRE, true);
-    }
+    var neg = k > KZERO && k < KFLIP, cur = null;
+    if (k >= 1 && k < KZERO) cur = RPOS[k - 1];
+    if (neg) cur = RNEG[k - KZERO - 1];
+    var idx = cur ? cur[0] : 0, sub = cur ? cur[1] : 0;
+    var ts = (neg ? NEG : TIMES)[idx];
+    overlays(slide, svg, ts, sub, afit17(ts), W220);
 
     // filtered for t >= 0: exactly zero, on the "0" row
     if (k >= KZERO) {
@@ -263,23 +297,15 @@
             function (t) { return fitAt(t)[0]; }, T0, 0, C_FAB, C_FRE, false);
       el("line", { x1: X(0), x2: X(0), y1: BOT.z, y2: LY(BOT, Math.hypot(AR, AI)), stroke: C_FAB, "stroke-width": 5 }, svg);
     }
-    // points: |A_fit| on top from the fit's stage on, |filtered| below from the next
-    function topCross(t) { var a = afit(t); cross(svg, X(t), LY(TOP, Math.hypot(a[0], a[1])), C_FAB); }
-    var npos = k >= KZERO ? TIMES.length : idx + (sub === SUB ? 1 : 0);
-    var ntop = k >= KZERO ? TIMES.length : idx + (sub >= 2 ? 1 : 0);
-    for (var j = 0; j < ntop; j++) topCross(TIMES[j]);
-    for (j = 0; j < npos; j++) {
-      cross(svg, X(TIMES[j]), BOT.z, C_FAB);
-    }
-    var nneg = k >= KFLIP ? NEG.length : neg ? idx + (sub === SUB ? 1 : 0) : 0;
-    var ntopn = k >= KFLIP ? NEG.length : neg ? idx + (sub >= 2 ? 1 : 0) : 0;
-    for (j = 0; j < ntopn; j++) topCross(NEG[j]);
+    // points: |filtered| at the times visited
+    var done = idx + (sub === 4 ? 1 : 0);
+    var npos = k >= KZERO ? TIMES.length : done;
+    for (var j = 0; j < npos; j++) cross(svg, X(TIMES[j]), BOT.z, C_FAB);
+    var nneg = k >= KFLIP ? NEG.length : neg ? done : 0;
     for (j = 0; j < nneg; j++) {
       var c = fitAt(NEG[j]);
       cross(svg, X(NEG[j]), LY(BOT, Math.hypot(c[0], c[1])), C_FAB);
     }
-
-    arrow(slide, svg, sub >= 1 ? ts : null);
   }
 
   Deck.widget("td-filter-n17", {
@@ -294,39 +320,29 @@
   });
 
   // ---------------------------------------------------------------- td-filter-diff
-  // Waveform 330, filter 220. Per time: arrow, dashed fit A_fit(t_k) Q_220 with
-  // A_fit = (1 - F(omega_330)) Psi(t_k), point at |F(omega_330) Psi(t_k)|; then the whole
-  // filtered waveform for t >= 0.
-  var DSUB = 3, DLAST = TIMES.length * DSUB + 1;
+  // Waveform 330, filter 220. Per time: t arrow; then the fit A_fit(t_k) Q_220 with
+  // A_fit = (1 - F(omega_330)) Psi(t_k), its A_fit arrow and the point at
+  // |F(omega_330) Psi(t_k)|; then the whole filtered waveform for t >= 0.
+  var RDIFF = rounds(TIMES.length, 0), DLAST = RDIFF.length + 1;
   var CFG_DIFF = { t0: -10, t1: 40, lmin: -3, zero: true, centre: true, tick: 5, tlab: 10, xlabel: "t/M" };
 
   function drawDiff(slide, k) {
     var svg = base(slide, CFG_DIFF);
     abrupt(svg, W330);
     var F = filterAt(W330), G = [1 - F[0], -F[1]];  // G = 1 - F: A_fit(t) = G Psi(t)
-    var last = k >= DLAST, idx = last ? TIMES.length : Math.floor((k - 1) / DSUB);
-    var sub = (k === 0 || last) ? 0 : (k - 1) % DSUB + 1;
-    var ts = TIMES[idx];
-    if (sub >= 2) {
-      var a = mul(G, psiAt(ts, W330));
-      pair(svg, TOP, a[0], a[1], ts, W220, C_FAB, C_FRE, true);
-    }
+    var last = k >= DLAST, cur = (k >= 1 && !last) ? RDIFF[k - 1] : null;
+    var idx = cur ? cur[0] : 0, sub = cur ? cur[1] : 0, ts = TIMES[idx];
+    overlays(slide, svg, ts, sub, mul(G, psiAt(ts, W330)), W220);
     // filtered for t >= 0: F(omega_330) times the original
     if (last) {
       var b = mul(F, [AR, AI]);
       pair(svg, BOT, b[0], b[1], 0, W330, C_FAB, C_FRE, false);
     }
-    var npts = last ? TIMES.length : idx + (sub === DSUB ? 1 : 0);
-    var ntop = last ? TIMES.length : idx + (sub >= 2 ? 1 : 0);
-    for (var j = 0; j < ntop; j++) {
-      var u = mul(G, psiAt(TIMES[j], W330));
-      cross(svg, X(TIMES[j]), LY(TOP, Math.hypot(u[0], u[1])), C_FAB);
-    }
-    for (j = 0; j < npts; j++) {
+    var npts = last ? TIMES.length : idx + (sub === 4 ? 1 : 0);
+    for (var j = 0; j < npts; j++) {
       var v = mul(F, psiAt(TIMES[j], W330));
       cross(svg, X(TIMES[j]), LY(BOT, Math.hypot(v[0], v[1])), C_FAB);
     }
-    arrow(slide, svg, sub >= 1 ? ts : null);
   }
 
   Deck.widget("td-filter-diff", {
@@ -337,11 +353,11 @@
   // ---------------------------------------------------------------- td-filter-plunge
   // Plunge waveform (chi = 0.7), filter 220 (Kerr chi = 0.7, M = 1), t in M from the
   // light-ring crossing, both waveforms divided by max |Psi| in the window.
-  // Per time: arrow, dashed fit A_fit(t_k) Q_220 with A_fit = Psi - hat Psi (equal to a
-  // direct least-squares fit to the release data to 1e-3), point at |hat Psi(t_k)|; then
-  // the whole filtered waveform.
+  // Per time: t arrow; then the fit A_fit(t_k) Q_220 with A_fit = Psi - hat Psi (equal to
+  // a direct least-squares fit to the release data to 1e-3), its A_fit arrow and the point
+  // at |hat Psi(t_k)|; then the whole filtered waveform.
   var PT = [40, 20, 0, -20, -40];  // visited from late to early
-  var PSUB = 3, PLAST = PT.length * PSUB + 1;
+  var RPL = rounds(PT.length, 0), PLAST = RPL.length + 1;
   var CFG_PL = { t0: -80, t1: 60, lmin: -4, zero: false, centre: true, tick: 10, tlab: 20, xlabel: "t/M" };
 
   // a stored series, linearly interpolated at t
@@ -355,29 +371,18 @@
     var svg = base(slide, CFG_PL);
     curve(svg, TOP, function (t) { return Math.hypot(sample(D.re, t), sample(D.im, t)); },
           function (t) { return sample(D.re, t); }, T0, T1, C_AB, C_RE, false);
-    var last = k >= PLAST, idx = last ? PT.length : Math.floor((k - 1) / PSUB);
-    var sub = (k === 0 || last) ? 0 : (k - 1) % PSUB + 1;
-    var ts = PT[idx];
-    function afit(t) { return [sample(D.re, t) - sample(D.fre, t), sample(D.im, t) - sample(D.fim, t)]; }
-    if (sub >= 2) {
-      var a = afit(ts);
-      pair(svg, TOP, a[0], a[1], ts, W, C_FAB, C_FRE, true);
-    }
+    var last = k >= PLAST, cur = (k >= 1 && !last) ? RPL[k - 1] : null;
+    var idx = cur ? cur[0] : 0, sub = cur ? cur[1] : 0, ts = PT[idx];
+    overlays(slide, svg, ts, sub, [sample(D.re, ts) - sample(D.fre, ts), sample(D.im, ts) - sample(D.fim, ts)], W);
     if (last) {
       curve(svg, BOT, function (t) { return Math.hypot(sample(D.fre, t), sample(D.fim, t)); },
             function (t) { return sample(D.fre, t); }, T0, T1, C_FAB, C_FRE, false);
     }
-    var npts = last ? PT.length : idx + (sub === PSUB ? 1 : 0);
-    var ntop = last ? PT.length : idx + (sub >= 2 ? 1 : 0);
-    for (var j = 0; j < ntop; j++) {
-      var u = afit(PT[j]);
-      cross(svg, X(PT[j]), LY(TOP, Math.hypot(u[0], u[1])), C_FAB);
-    }
-    for (j = 0; j < npts; j++) {
+    var npts = last ? PT.length : idx + (sub === 4 ? 1 : 0);
+    for (var j = 0; j < npts; j++) {
       var v = Math.hypot(sample(D.fre, PT[j]), sample(D.fim, PT[j]));
       cross(svg, X(PT[j]), LY(BOT, v), C_FAB);
     }
-    arrow(slide, svg, sub >= 1 ? ts : null);
   }
 
   Deck.widget("td-filter-plunge", {

@@ -1,6 +1,6 @@
 .td-filter-eq {
   position: absolute;
-  top: 16px;
+  top: 140px;
   left: 0;
   right: 0;
   text-align: center;
@@ -26,6 +26,16 @@
 
 .td-filter-label-top { top: 262px; }
 .td-filter-label-bot { top: 647px; }
+
+.td-filter-alabel {
+  position: absolute;
+  font-size: 40px;
+  white-space: nowrap;
+  transform: translate(-100%, -50%);
+  padding: 0 4px;
+  background: #fff;
+  visibility: hidden;
+}
 
 .td-filter-tlabel {
   position: absolute;
