@@ -5,13 +5,14 @@
 // filtered waveform vanish. For t < 0, Psi(t) = 0 and the filter returns minus the
 // least-squares amplitude of a QNM fitted to the waveform after t: the ringdown flipped
 // in time, -A e^{-i omega^* t}.
-// td-filter-diff: the same filter on a QNM of another frequency omega' (t >= 0 only).
-// There psi = Q' and the mismatch is the constant F(omega') = (omega' - omega_220) /
-// (omega' - omega_220^*), so the filtered waveform is the same QNM rescaled by F(omega').
+// td-filter-diff: the same 220 waveform (t >= 0 only) filtered by the zero of another mode,
+// omega_f = omega_331. The mismatch is the constant F(omega_220) = (omega_220 - omega_f) /
+// (omega_220 - omega_f^*), so the filtered waveform is the same QNM rescaled by F(omega_220).
 // td-filter-plunge: the same filter on the plunge waveform of 2608.29466 (data and the
 // filtered waveform precomputed by tasks/t04-td-filter/plunge_data.py).
 //
-// The red dashed QNM at each visited time t is the least-squares fit A_fit(t) Q_220(. - t) to Psi after t,
+// The red dashed QNM at each visited time t is the least-squares fit A_fit(t) Q(. - t) to Psi after t, Q the
+// filter's QNM (Q_220; Q_331 on td-filter-diff),
 // so hat Psi(t) = Psi(t) - A_fit(t); a red double-headed arrow labelled A_fit spans |A_fit(t)| on the
 // original panel and a red cross marks |hat Psi(t)| on the filtered one.
 // All panels show |.| (dark) and |Re .| (light) on a log axis, original in blue, filtered in green, fitted QNMs in
@@ -26,10 +27,10 @@
   var PX = 36, PY = 26;
 
   var NS = "http://www.w3.org/2000/svg";
-  // Schwarzschild 220 and 330 modes, M omega, with M = 1 (t in units of M)
+  // Schwarzschild 220 and 331 modes, M omega, with M = 1 (t in units of M)
   var WR = 0.3737, WI = -0.0890;  // omega_220 = WR + i WI
   var W220 = [WR, WI];
-  var W330 = [0.5994, -0.0927];
+  var W331 = [0.5826, -0.2813];
   var AR = Math.cos(0.2), AI = -Math.sin(0.2);  // complex amplitude A; phase keeps t = 0, 5, 10 off the zeros of Re
 
   // Per-slide axes, set by base(): time range, x range in slide px, log10 range, "0" row
@@ -75,9 +76,9 @@
 
   // complex product
   function mul(a, b) { return [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]]; }
-  // F(omega') = (omega' - omega_220) / (omega' - omega_220^*)
-  function filterAt(w) {
-    var nr = w[0] - WR, ni = w[1] - WI, dr = w[0] - WR, di = w[1] + WI, d2 = dr * dr + di * di;
+  // F(omega) = (omega - omega_f) / (omega - omega_f^*), omega_f = wf
+  function filterAt(w, wf) {
+    var nr = w[0] - wf[0], ni = w[1] - wf[1], dr = w[0] - wf[0], di = w[1] + wf[1], d2 = dr * dr + di * di;
     return [(nr * dr + ni * di) / d2, (ni * dr - nr * di) / d2];
   }
 
@@ -257,7 +258,7 @@
     return out;
   }
 
-  // the overlays of one stage: t arrow, fitted QNM a Q_220(t - ts), A_fit arrow
+  // the overlays of one stage: t arrow, fitted QNM a Q(t - ts) with Q of frequency w, A_fit arrow
   function overlays(slide, svg, ts, sub, a, w) {
     if (sub >= 2) pair(svg, TOP, a[0], a[1], ts, w, C_FIT, C_FITRE, true);
     afitArrow(slide, svg, ts, sub >= 3 ? a : null);
@@ -330,27 +331,27 @@
   });
 
   // ---------------------------------------------------------------- td-filter-diff
-  // Waveform 330, filter 220. Per time: t arrow; then the fit A_fit(t_k) Q_220 with
-  // A_fit = (1 - F(omega_330)) Psi(t_k), its A_fit arrow and the point at
-  // |F(omega_330) Psi(t_k)|; then the whole filtered waveform for t >= 0.
+  // Waveform 220, filter 331. Per time: t arrow; then the fit A_fit(t_k) Q_331 with
+  // A_fit = (1 - F(omega_220)) Psi(t_k), its A_fit arrow and the point at
+  // |F(omega_220) Psi(t_k)|; then the whole filtered waveform for t >= 0.
   var RDIFF = rounds(TIMES.length, 0), DLAST = RDIFF.length + 1;
   var CFG_DIFF = { t0: -10, t1: 40, lmin: -3, zero: true, centre: true, tick: 5, tlab: 10, xlabel: "t/M" };
 
   function drawDiff(slide, k) {
     var svg = base(slide, CFG_DIFF);
-    abrupt(svg, W330);
-    var F = filterAt(W330), G = [1 - F[0], -F[1]];  // G = 1 - F: A_fit(t) = G Psi(t)
+    abrupt(svg, W220);
+    var F = filterAt(W220, W331), G = [1 - F[0], -F[1]];  // G = 1 - F: A_fit(t) = G Psi(t)
     var last = k >= DLAST, cur = (k >= 1 && !last) ? RDIFF[k - 1] : null;
     var idx = cur ? cur[0] : 0, sub = cur ? cur[1] : 0, ts = TIMES[idx];
-    overlays(slide, svg, ts, sub, mul(G, psiAt(ts, W330)), W220);
-    // filtered for t >= 0: F(omega_330) times the original
+    overlays(slide, svg, ts, sub, mul(G, psiAt(ts, W220)), W331);
+    // filtered for t >= 0: F(omega_220) times the original
     if (last) {
       var b = mul(F, [AR, AI]);
-      pair(svg, BOT, b[0], b[1], 0, W330, C_FAB, C_FRE, false);
+      pair(svg, BOT, b[0], b[1], 0, W220, C_FAB, C_FRE, false);
     }
     var npts = last ? TIMES.length : idx + (sub === 4 ? 1 : 0);
     for (var j = 0; j < npts; j++) {
-      var v = mul(F, psiAt(TIMES[j], W330));
+      var v = mul(F, psiAt(TIMES[j], W220));
       cross(svg, X(TIMES[j]), LY(BOT, Math.hypot(v[0], v[1])), C_FAB);
     }
   }
