@@ -226,7 +226,7 @@
     if (ts === null) { tl.style.visibility = "hidden"; return; }
     var x = X(ts);
     darrow(svg, x, TOP.y1 + 6, BOT.y0 - 6, "#000", 6, 15, 28);
-    katex.render("t = " + ts, tl);
+    katex.render("t = " + ts + "\\,M", tl);
     tl.style.left = (x + 20) + "px";
     tl.style.visibility = "visible";
   }
