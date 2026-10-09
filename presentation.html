@@ -42,9 +42,9 @@
 <section class="slide" id="td-filter-deriv">
   <div class="td-filter-deriv">
     <div class="td-filter-dlabel">frequency domain</div>
-    <div>$$\tilde{\Psi}(\omega) \xrightarrow{\text{filter}} \mathcal{F}(\omega)\,\tilde{\Psi}(\omega) = \frac{\omega - \omega_{\ell mn}}{\omega - \omega_{\ell mn}^*}\,\tilde{\Psi}(\omega)$$</div>
+    <div>$$\tilde{\Psi}(\omega) \xrightarrow{\text{filter}} \frac{\omega - \omega_{\ell mn}}{\omega - \omega_{\ell mn}^*}\,\tilde{\Psi}(\omega)$$</div>
     <div></div>
-    <div data-step="1">$$= \left[1 - \frac{\omega_{\ell mn} - \omega_{\ell mn}^*}{\omega - \omega_{\ell mn}^*}\right]\tilde{\Psi}(\omega)$$</div>
+    <div data-step="1">$$\phantom{\tilde{\Psi}(\omega) \xrightarrow{\text{filter}}} = \left[1 - \frac{\omega_{\ell mn} - \omega_{\ell mn}^*}{\omega - \omega_{\ell mn}^*}\right]\tilde{\Psi}(\omega)$$</div>
     <div class="td-filter-dlabel" data-step="2">time domain</div>
     <div data-step="2">$$\Psi(t) \xrightarrow{\text{filter}} \Psi(t) - \frac{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,\Psi(t+\tau)\,d\tau}{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,e^{-i\omega_{\ell mn}\tau}\,d\tau}$$</div>
   </div>
@@ -59,6 +59,7 @@
   <div class="td-filter-see"><span class="cite">See the appendix of <u>Cheung</u> (2608.29466)</span></div>
 </section>
 <section class="slide" id="td-filter-n17">
+  <h1 class="title">$\omega = \omega_{220}$</h1>
   <div class="td-filter-eq">
     $$\Psi(t) \xrightarrow{\text{filter}} \textcolor{#1f4e9c}{\Psi(t)} - \textcolor{#d62728}{A_{\rm fit}(t)}$$
   </div>
@@ -71,6 +72,7 @@
   <div class="td-filter-unit" data-step="19">$$|\mathcal{F}(\omega)| = \left|\frac{\omega - \omega_{220}}{\omega - \omega_{220}^*}\right| = 1$$</div>
 </section>
 <section class="slide" id="td-filter-diff">
+  <h1 class="title">$\omega \neq \omega_{220}$</h1>
   <div class="td-filter-eq">
     $$\Psi(t) \xrightarrow{\text{filter}} \textcolor{#1f4e9c}{\Psi(t)} - \textcolor{#d62728}{A_{\rm fit}(t)}$$
   </div>
@@ -92,8 +94,8 @@
   </div>
   <ul class="td-filter-points">
     <li data-step="1">The filter redistributes power in time, $|\mathcal{F}(\omega)| = 1$.</li>
-    <li data-step="2">If the waveform is a clean QNM at times $\tau > t$, the filter removes it cleanly and deposits the power to earlier times.</li>
-    <li data-step="3">The filter does not affect the shape of other QNMs.</li>
+    <li data-step="2">If the waveform is a clean QNM after time $t_0$, the filter removes it cleanly and deposits the power to earlier times $t < t_0$.</li>
+    <li data-step="3">The filter rescales the amplitude of other QNMs.</li>
   </ul>
 </section>
 <!-- part: bg-filter -->

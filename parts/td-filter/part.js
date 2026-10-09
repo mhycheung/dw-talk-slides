@@ -35,14 +35,14 @@
   // Per-slide axes, set by base(): time range, x range in slide px, log10 range, "0" row
   var T0, T1, X0, X1, LMIN, LMAX = Math.log10(2), ZERO;
   // y0: top of the frame; lb: bottom of the log region; z: the "0" row; y1: the x axis
-  var TOPZ = { y0: 250, lb: 465, z: 510, y1: 540, id: "top" };
-  var BOTZ = { y0: 635, lb: 850, z: 895, y1: 925, id: "bot" };
+  var TOPZ = { y0: 245, lb: 463, z: 510, y1: 540, id: "top" };
+  var BOTZ = { y0: 635, lb: 853, z: 900, y1: 930, id: "bot" };
   // the same frames with no "0" row: the log region fills the frame
-  var TOPN = { y0: 250, lb: 530, y1: 540, id: "top" };
-  var BOTN = { y0: 635, lb: 915, y1: 925, id: "bot" };
+  var TOPN = { y0: 245, lb: 530, y1: 540, id: "top" };
+  var BOTN = { y0: 635, lb: 920, y1: 930, id: "bot" };
   var TOP, BOT;
-  var BRK = 237;                  // offset of the axis break below y0
-  var XL = 270, XR = 1250;        // x range of a slide with equations on the right
+  var BRK = 241;                  // offset of the axis break below y0
+  var XL = 200, XR = 1320;        // x range of a slide with equations on the right
   var DX = 282;                   // shift that centres a slide with nothing on the right
 
   function X(t) { return X0 + PX + (t - T0) / (T1 - T0) * (X1 - X0 - 2 * PX); }
