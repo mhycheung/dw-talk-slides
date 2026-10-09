@@ -264,6 +264,16 @@
     arrow(slide, svg, sub >= 1 ? ts : null);
   }
 
+  // ---------------------------------------------------------------- td-filter-overlap
+  // Step 1: the equation with the red brace "least squares QNM fit" replaces the bare one.
+  Deck.widget("td-filter-overlap", {
+    steps: 2,
+    step: function (slide, k) {
+      slide.querySelector(".td-filter-ov0").style.visibility = k >= 1 ? "hidden" : "visible";
+      slide.querySelector(".td-filter-ov1").style.visibility = k >= 1 ? "visible" : "hidden";
+    }
+  });
+
   // ---------------------------------------------------------------- td-filter-n17
   var TIMES = [0, 5, 10];         // times visited one after another, t >= 0
   var NEG = [-5, -10, -15];       // then these, t < 0

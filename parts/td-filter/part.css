@@ -115,9 +115,10 @@
   font-size: 50px;
 }
 
-.td-filter-ovtext {
-  font-size: 44px;
-}
+/* td-filter-overlap: the same equation twice, stacked; the copy with the red brace replaces the
+   one with a transparent brace at step 1 (widget in part.js), so nothing moves */
+.td-filter-ovstack { position: relative; }
+.td-filter-ov1 { position: absolute; top: 0; left: 0; right: 0; }
 
 .td-filter-unit {
   position: absolute;

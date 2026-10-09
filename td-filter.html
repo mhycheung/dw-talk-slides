@@ -27,9 +27,11 @@
 
 <section class="slide" id="td-filter-overlap">
   <div class="td-filter-ov">
-    <div>$$\Psi(t) \xrightarrow{\text{filter}} \Psi(t) - \frac{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,\Psi(t+\tau)\,d\tau}{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,e^{-i\omega_{\ell mn}\tau}\,d\tau}$$</div>
-    <div data-step="1">$$= \Psi(t) - A_{\rm fit}(t)$$</div>
-    <div class="td-filter-ovtext" data-step="2">where $A_{\rm fit}(t)$ is the amplitude of a QNM fitted to $\Psi(t)$ starting at $t$ (linear least squares)</div>
+    <div class="td-filter-ovstack">
+      <div class="td-filter-ov0">$$\Psi(t) \xrightarrow{\text{filter}} \Psi(t) - {\color{transparent}\underbrace{\color{black}\frac{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,\Psi(t+\tau)\,d\tau}{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,e^{-i\omega_{\ell mn}\tau}\,d\tau}}_{\text{least squares QNM fit}}}$$</div>
+      <div class="td-filter-ov1">$$\Psi(t) \xrightarrow{\text{filter}} \Psi(t) - {\color{#d62728}\underbrace{\color{black}\frac{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,\Psi(t+\tau)\,d\tau}{\displaystyle\int_0^\infty e^{i\omega_{\ell mn}^*\tau}\,e^{-i\omega_{\ell mn}\tau}\,d\tau}}_{\text{least squares QNM fit}}}$$</div>
+    </div>
+    <div data-step="2">$$= \Psi(t) - \textcolor{#d62728}{A_{\rm fit}(t)}$$</div>
   </div>
   <div class="td-filter-see"><span class="cite">See the appendix of <u>Cheung</u> (2608.29466)</span></div>
 </section>
