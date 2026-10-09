@@ -368,11 +368,12 @@
   // at |hat Psi(t_k)|; then the whole filtered waveform.
   var PT = [40, 20, 0, -20, -40];  // visited from late to early
   var RPL = rounds(PT.length, 0), PLAST = RPL.length + 1;
-  // last stage (after the non-QNM line at PLAST + 1): a teal arrow (the direct-wave colour of
-  // the waveform figure of 2608.29466) labelled "direct wave", pointing at where the filtered
-  // curve starts to decay after its peak (t = -8.1 M): t = 1.2 M, where d ln|hat Psi|/dt first
-  // drops below -0.05/M and |hat Psi| is 0.80 of its peak (measured on plunge.js 2026-10-08).
-  var PDW = PLAST + 2, C_DW = "#3bceac", DW_T = 1.2;
+  // last stage (after the non-QNM line at PLAST + 1): the direct wave highlighted on the
+  // filtered panel as in the waveform figure of 2608.29466 (scripts/fig_waveform_panel.py of
+  // its release): the filtered curve redrawn in C_DW (orange, the user's choice, to stand out from the green) over t = 0 to 30 M (the user's choice for
+  // this one-zero filter), fading in and out linearly over DW_FADE, labelled "direct wave"
+  // along the curve above it.
+  var PDW = PLAST + 2, C_DW = "#e67e00", C_DWRE = "#f6c58c", DW_T0 = 0, DW_T1 = 30, DW_FADE = 2;
   var CFG_PL = { t0: -80, t1: 60, lmin: -4, zero: false, centre: true, tick: 10, tlab: 20, xlabel: "t/M" };
 
   // a stored series, linearly interpolated at t
@@ -401,24 +402,39 @@
     directWave(slide, svg, k >= PDW);
   }
 
-  // the direct-wave arrow and its label in the empty upper right of the filtered panel;
-  // on === false hides the label
+  // mix of two #rrggbb colours, m = 0 gives a, m = 1 gives b
+  function mix(a, b, m) {
+    var s = "#";
+    for (var i = 1; i < 7; i += 2) {
+      var x = Math.round((1 - m) * parseInt(a.substr(i, 2), 16) + m * parseInt(b.substr(i, 2), 16));
+      s += (x < 16 ? "0" : "") + x.toString(16);
+    }
+    return s;
+  }
+
+  // the direct-wave overlay and its label; on === false hides the label
   function directWave(slide, svg, on) {
     var lab = slide.querySelector(".td-filter-dwlabel");
     lab.style.visibility = on ? "visible" : "hidden";
     if (!on) return;
     var D = window.td_filter_plunge;
-    var xp = X(DW_T), yp = LY(BOT, Math.hypot(sample(D.fre, DW_T), sample(D.fim, DW_T)));
-    var xl = X(32), yl = LY(BOT, 0.55);          // centre of the label
-    var xa = xl - 150, ya = yl + 6;               // arrow tail, at the label's left end
-    var dx = xp - xa, dy = yp - ya, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
-    var xt = xp - 10 * ux, yt = yp - 10 * uy;     // tip stops just short of the curve
-    var hl = 24, hw = 11;
-    el("line", { x1: xa, y1: ya, x2: xt - hl * ux, y2: yt - hl * uy, stroke: C_DW, "stroke-width": 5 }, svg);
-    el("path", { d: "M" + xt + " " + yt + "L" + (xt - hl * ux - hw * uy) + " " + (yt - hl * uy + hw * ux) +
-                 "L" + (xt - hl * ux + hw * uy) + " " + (yt - hl * uy - hw * ux) + "Z", fill: C_DW }, svg);
-    lab.style.left = xl + "px";
-    lab.style.top = yl + "px";
+    var fa = function (t) { return Math.hypot(sample(D.fre, t), sample(D.fim, t)); };
+    var fr = function (t) { return Math.abs(sample(D.fre, t)); };
+    var n = 400, clip = clipOf(svg, BOT);
+    [[fr, C_FRE, C_DWRE, 4], [fa, C_FAB, C_DW, 5]].forEach(function (c) {
+      for (var i = 0; i < n; i++) {
+        var ta = DW_T0 + (DW_T1 - DW_T0) * i / n, tb = DW_T0 + (DW_T1 - DW_T0) * (i + 1) / n, tm = (ta + tb) / 2;
+        var m = Math.min(1, (tm - DW_T0) / DW_FADE, (DW_T1 - tm) / DW_FADE);
+        el("line", { x1: X(ta), y1: LY(BOT, c[0](ta)), x2: X(tb), y2: LY(BOT, c[0](tb)), stroke: mix(c[1], c[2], m),
+                     "stroke-width": c[3], "stroke-linecap": "round", "clip-path": clip }, svg);
+      }
+    });
+    // label along the trend of the decay (the chord from t = 14 to 32 M), just above the curve,
+    // centred at t = 23 M where the curve is low enough for it to clear the top of the panel
+    var dx = X(32) - X(14), dy = LY(BOT, fa(32)) - LY(BOT, fa(14)), L = Math.hypot(dx, dy), off = 30;
+    lab.style.left = (X(23) + off * dy / L) + "px";
+    lab.style.top = (LY(BOT, fa(23)) - off * dx / L) + "px";
+    lab.style.transform = "translate(-50%, -50%) rotate(" + (Math.atan2(dy, dx) * 180 / Math.PI).toFixed(1) + "deg)";
   }
 
   Deck.widget("td-filter-plunge", {

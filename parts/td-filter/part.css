@@ -179,10 +179,10 @@
 /* td-filter-plunge, last step: the "direct wave" label on the filtered panel, placed by part.js */
 .td-filter-dwlabel {
   position: absolute;
-  font-size: 44px;
+  font-size: 36px;
   white-space: nowrap;
-  color: #3bceac;
+  color: #e67e00;
   font-weight: bold;
-  transform: translate(-50%, -50%);
+  line-height: 1;
   visibility: hidden;
 }
